@@ -9,6 +9,8 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const isHomePage = location === "/";
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -21,13 +23,17 @@ export function Navbar() {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
+    { name: "News", path: "/news" },
+    { name: "Workspace", path: "/workspace" },
     { name: "Contact", path: "/contact" },
   ];
+
+  const useDarkText = isScrolled || !isHomePage;
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        useDarkText
           ? "bg-background/95 backdrop-blur-md shadow-md py-3"
           : "bg-transparent py-5"
       }`}
@@ -36,14 +42,18 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-3 z-50" data-testid="link-logo">
           <img src={logoPath} alt="Trust Hub Logo" className="h-12 w-12 rounded-full object-cover shadow-sm" />
           <div className="flex flex-col">
-            <span className={`font-serif font-bold text-lg leading-none ${isScrolled ? "text-foreground" : "text-white"}`}>TRUST HUB</span>
-            <span className={`text-[10px] tracking-wider uppercase font-semibold ${isScrolled ? "text-muted-foreground" : "text-white/80"}`}>Business Solutions</span>
+            <span className={`font-serif font-bold text-lg leading-none ${useDarkText ? "text-foreground" : "text-white"}`}>
+              TRUST HUB
+            </span>
+            <span className={`text-[10px] tracking-wider uppercase font-semibold ${useDarkText ? "text-muted-foreground" : "text-white/80"}`}>
+              Business Solutions
+            </span>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <ul className="flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
+          <ul className="flex items-center gap-6">
             {navLinks.map((link) => (
               <li key={link.path}>
                 <Link
@@ -51,7 +61,7 @@ export function Navbar() {
                   className={`text-sm font-medium transition-colors hover:text-primary ${
                     location === link.path
                       ? "text-primary"
-                      : isScrolled
+                      : useDarkText
                       ? "text-foreground"
                       : "text-white/90"
                   }`}
@@ -62,7 +72,7 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-          <Button 
+          <Button
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-sm px-6"
             asChild
           >
@@ -78,9 +88,9 @@ export function Navbar() {
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? (
-            <X className={isScrolled || mobileMenuOpen ? "text-foreground" : "text-white"} />
+            <X className={useDarkText || mobileMenuOpen ? "text-foreground" : "text-white"} />
           ) : (
-            <Menu className={isScrolled ? "text-foreground" : "text-white"} />
+            <Menu className={useDarkText ? "text-foreground" : "text-white"} />
           )}
         </button>
 
@@ -106,7 +116,7 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-          <Button 
+          <Button
             className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-sm px-8 py-6 text-lg"
             asChild
             onClick={() => setMobileMenuOpen(false)}
