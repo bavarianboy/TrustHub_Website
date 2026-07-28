@@ -1,6 +1,6 @@
 # Trust Hub Business Solutions
 
-Marketing website and (in progress) admin backend for Trust Hub Business Solutions — a corporate services firm in Riyadh, Saudi Arabia, offering business setup, PRO services, HR & payroll, accounting & tax compliance, consultancy, and workspace rental.
+Bilingual (English/Arabic) marketing website and admin backend for Trust Hub Business Solutions — a corporate services firm in Riyadh, Saudi Arabia, offering business setup, PRO services, HR & payroll, accounting & tax compliance, consultancy, and workspace rental.
 
 ## Requirements
 
@@ -104,7 +104,17 @@ Never hand-edit anything under `src/generated/` — it is overwritten on every r
 | `GET/POST /api/admin/articles`, `PATCH/DELETE /api/admin/articles/:id` | session | Article CRUD, both locale translations at once |
 | `GET /api/admin/leads`, `PATCH /api/admin/leads/:id` | session | Lead inbox and status updates |
 
-No admin UI exists yet for any of the `/admin` routes — that's Phase 5.
+## Site structure
+
+- **Marketing site**: `/`, `/about`, `/services`, `/news`, `/news/:slug`,
+  `/workspace`, `/contact` — each also served under an `/ar/...` prefix for
+  Arabic (RTL). Copy lives in `artifacts/trust-hub/src/i18n/locales/{en,ar}.json`;
+  add a page by adding its strings there and calling `useTranslation()` /
+  `useDocumentMeta()` in the component, matching the existing pages.
+- **Admin panel**: `/admin` — English-only, lazy-loaded, session-gated. Log in
+  with a user created via `seed-admin` (above). Leads inbox and an article
+  editor with EN/AR tabs live under `artifacts/trust-hub/src/admin/`.
+  Disallowed in `robots.txt` and tagged `noindex` while mounted.
 
 ## History
 

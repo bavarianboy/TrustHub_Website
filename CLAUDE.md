@@ -10,26 +10,41 @@ can't infer from the code.
   `@workspace/api-zod`, and submits through the generated `useCreateLead()`
   mutation hook. No more `setTimeout` fake — a failed request shows a real
   error toast, a successful one resets the form.
-- **News is real.** `/news` fetches `useListArticles({ locale: "en" })`;
-  category filter, featured/regular split, loading skeletons, empty and error
-  states are all driven by the live response, not a hardcoded array. `/news/:slug`
-  (`NewsArticle.tsx`, new) fetches `useGetArticleBySlug` and renders the full
-  article — the route didn't exist before Phase 4. Missing/unpublished slugs
-  show a not-found state instead of crashing.
-- **Two pages remain hardcoded**: `About.tsx`, `Services.tsx`, and the plan
-  arrays in `Workspace.tsx` are still literal data — no backend models exist
-  for them yet, out of scope for Phase 4.
+- **News is real.** `/news` fetches `useListArticles`; category filter,
+  featured/regular split, loading skeletons, empty and error states are all
+  driven by the live response, not a hardcoded array. `/news/:slug`
+  (`NewsArticle.tsx`) fetches `useGetArticleBySlug` and renders the full
+  article. Missing/unpublished slugs show a not-found state instead of
+  crashing.
+- **The site is bilingual (EN/AR).** Every page under `src/pages/` and both
+  layout components pull copy from `src/i18n/locales/{en,ar}.json` via
+  `react-i18next`. `/ar/...` is a real path prefix (see Architecture
+  decisions), RTL layout uses Tailwind logical properties throughout, and
+  fonts are self-hosted via `@fontsource` (Plus Jakarta Sans / Playfair
+  Display for EN, IBM Plex Sans Arabic for AR — swapped via `[dir="rtl"]` in
+  `index.css`). `About.tsx`, `Services.tsx`, and `Workspace.tsx`'s plan data
+  are still literal arrays in the JSON locale files (not DB-backed) — fully
+  translated, just not admin-editable content, unlike articles.
+- **The admin panel is real**, at `/admin` (`src/admin/`), English-only,
+  lazy-loaded so its ~37KB chunk never ships to marketing-site visitors.
+  Login, a leads inbox (status filter, CSV export, inline status change), and
+  an article editor with EN/AR tabs writing both `article_translations` rows
+  in one save. `robots.txt` disallows `/admin` and the panel additionally sets
+  `<meta name="robots" content="noindex, nofollow">` while mounted.
 - **The API is real**: `leads`, `auth` (login/logout/me), public `articles`,
   and `admin/leads` + `admin/articles` CRUD are implemented, schema-validated
   end to end, and tested against a live Neon database (see `lib/db/src/schema/`
   and `artifacts/api-server/src/routes/`).
 - Placeholder data is still live on the site: `+966 11 000 0000`,
   `P.O. Box 12345`, `href="#"` social and Privacy/Terms links, and a grey box
-  where the workspace map belongs. Unrelated to the backend work above.
-- No admin UI yet — the admin API has no frontend. `pnpm --filter
-  @workspace/scripts run seed-admin -- <email> <password> [name]` is the only
-  way to create or update an admin login today. Content (articles) can only be
-  created via direct API calls until Phase 5 ships an editor.
+  where the workspace map belongs.
+- **Article `category` is not localized** — it's a single plain column on
+  `articlesTable`, not per-locale like title/excerpt/body. An Arabic visitor
+  currently sees whatever string the admin typed into Category, in whichever
+  language that was. Fixing this means moving category into (or alongside)
+  `article_translations`; flagged, not fixed, since it's a schema change.
+  `pnpm --filter @workspace/scripts run seed-admin -- <email> <password>
+  [name]` remains the only way to create or update an admin login.
 
 ## Architecture decisions
 
@@ -42,9 +57,17 @@ can't infer from the code.
   `title_en` / `title_ar` columns. Adding a third language should be a data
   change, not a migration.
 - **Arabic uses a `/ar/...` path prefix**, not a stateful language toggle, so
-  each language is separately indexable with `hreflang` alternates. wouter's
-  `base` prop rewrites every `<Link href>` automatically, so localising URLs
-  needs no changes to page components.
+  each language is separately indexable with `hreflang` alternates
+  (`useDocumentMeta`). Locale is derived once, at the top of `App.tsx`, from
+  the raw unprefixed pathname (`useLocation()` called *outside* any wouter
+  `Router`) — that value feeds the locale-scoped `<WouterRouter base="/ar">`
+  wrapping the marketing routes. wouter's `base` then rewrites every
+  `<Link href>` automatically, so page components never construct
+  locale-prefixed URLs themselves.
+- **Admin is a separate route tree, not part of the locale system.** `App.tsx`
+  checks the raw pathname for `/admin` *before* computing locale and branches
+  to a lazily-imported `AdminApp` with its own `<WouterRouter base="/admin">`.
+  It has no i18n — English only, by design.
 - **Auth is self-hosted**: argon2 password hashes; session tokens are random
   32-byte values, HMAC-SHA256'd with `SESSION_SECRET` before being stored in
   `sessions.tokenHash`, so a leaked DB dump alone can't be replayed as a valid
@@ -147,3 +170,28 @@ Two traps that came from that origin:
   convention). A bare `req.params.id!` therefore doesn't narrow to `string`.
   Use `requireParam(req, "id")` from `artifacts/api-server/src/lib/params.ts`
   instead — it narrows and 400s on a missing/duplicate param.
+- **Any hook called from inside a page component sees a base-relative
+  pathname, not the raw one** — `useLocation()` there is already inside the
+  locale-scoped `<WouterRouter base="/ar">`, so it has the prefix stripped.
+  `useDocumentMeta` originally re-derived locale by calling `useLocation()`
+  again and parsing for `/ar`, which meant it always saw `/services` and
+  always concluded "en" — the canonical tag pointed at the English URL even
+  on the Arabic page. Fixed by reading `i18n.language` instead (kept in sync
+  by the one `useLocation()` call that's outside the Router, in `App.tsx` /
+  `useLocale.ts`). Same trap avoided in `Navbar.tsx`'s language switcher by
+  the same means — don't reintroduce a second raw-path parse anywhere else.
+- **A `<FormControl>` (shadcn's form wrapper around Radix `Slot`) must wrap
+  exactly one real element, never a `Fragment`.** Slot clones its child and
+  injects `id`/`aria-*` props onto it; handed a `<>...</>`, React logs
+  "Invalid prop `id` supplied to `React.Fragment`" for every prop it tries to
+  inject. Hit this wrapping an `<Input>` + `<datalist>` together in
+  `ArticleEditor.tsx`'s category field — fix was moving the `<datalist>`
+  outside `<FormControl>`, as a sibling, not a fix to `FormControl` itself.
+- **React Query's default `retry: 3` turns an expected 401 into a multi-second
+  spinner.** `useGetCurrentUser()` 401s on every first visit to `/admin` (not
+  logged in yet) — with default retries, that's three backed-off attempts
+  before the login form appears. `AdminApp.tsx` passes `{ query: { retry:
+  false, queryKey: getGetCurrentUserQueryKey() } }`; the explicit `queryKey`
+  is required only to satisfy `UseQueryOptions`'s type (the hook supplies it
+  by default at runtime regardless) — omitting it is a type error, not a
+  runtime bug, so don't "simplify" it away.
