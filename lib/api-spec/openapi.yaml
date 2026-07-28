@@ -10,6 +10,16 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: leads
+    description: Public contact / lead capture
+  - name: auth
+    description: Admin session authentication
+  - name: articles
+    description: Public news articles
+  - name: admin-articles
+    description: Admin article management
+  - name: admin-leads
+    description: Admin lead management
 paths:
   /healthz:
     get:
@@ -24,6 +34,324 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /leads:
+    post:
+      operationId: createLead
+      tags: [leads]
+      summary: Submit a contact form lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLeadRequest"
+      responses:
+        "201":
+          description: Lead recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Log in as an admin user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Log out the current session
+      responses:
+        "204":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get the currently authenticated admin user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      summary: List published articles
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published articles in the requested locale
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArticleSummary"
+
+  /articles/{slug}:
+    get:
+      operationId: getArticleBySlug
+      tags: [articles]
+      summary: Get a single published article
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: The article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/leads:
+    get:
+      operationId: adminListLeads
+      tags: [admin-leads]
+      summary: List all leads (requires admin session)
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/LeadStatus"
+      responses:
+        "200":
+          description: Leads
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lead"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/leads/{id}:
+    patch:
+      operationId: adminUpdateLeadStatus
+      tags: [admin-leads]
+      summary: Update a lead's status (requires admin session)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: "#/components/schemas/LeadStatus"
+              required: [status]
+      responses:
+        "200":
+          description: Updated lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles:
+    get:
+      operationId: adminListArticles
+      tags: [admin-articles]
+      summary: List all articles including drafts (requires admin session)
+      responses:
+        "200":
+          description: Articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminArticle"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: adminCreateArticle
+      tags: [admin-articles]
+      summary: Create an article (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertArticleRequest"
+      responses:
+        "201":
+          description: Created article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminArticle"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles/{id}:
+    patch:
+      operationId: adminUpdateArticle
+      tags: [admin-articles]
+      summary: Update an article (requires admin session)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertArticleRequest"
+      responses:
+        "200":
+          description: Updated article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminArticle"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: adminDeleteArticle
+      tags: [admin-articles]
+      summary: Delete an article (requires admin session)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +362,251 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Locale:
+      type: string
+      enum: [en, ar]
+
+    LeadStatus:
+      type: string
+      enum: [new, contacted, closed]
+
+    CreateLeadRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        company:
+          type: string
+        service:
+          type: string
+        message:
+          type: string
+          minLength: 1
+        locale:
+          $ref: "#/components/schemas/Locale"
+        # Honeypot field: must arrive empty. A real browser with the field
+        # hidden via CSS never fills it in; bots that autofill every input do.
+        website:
+          type: string
+      required:
+        - name
+        - email
+        - message
+
+    Lead:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        message:
+          type: string
+        sourcePage:
+          type: string
+          nullable: true
+        locale:
+          $ref: "#/components/schemas/Locale"
+        status:
+          $ref: "#/components/schemas/LeadStatus"
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - message
+        - locale
+        - status
+        - createdAt
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+      required:
+        - email
+        - password
+
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - email
+        - name
+
+    ArticleSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        category:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        featured:
+          type: boolean
+        publishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        title:
+          type: string
+        excerpt:
+          type: string
+      required:
+        - id
+        - slug
+        - category
+        - featured
+        - title
+        - excerpt
+
+    ArticleDetail:
+      allOf:
+        - $ref: "#/components/schemas/ArticleSummary"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: [draft, published]
+            body:
+              type: string
+          required:
+            - status
+            - body
+
+    AdminArticle:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        category:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        featured:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, published]
+        publishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        translations:
+          type: array
+          items:
+            type: object
+            properties:
+              locale:
+                $ref: "#/components/schemas/Locale"
+              title:
+                type: string
+              excerpt:
+                type: string
+              body:
+                type: string
+            required:
+              - locale
+              - title
+              - excerpt
+              - body
+      required:
+        - id
+        - slug
+        - category
+        - featured
+        - status
+        - translations
+
+    UpsertArticleRequest:
+      type: object
+      properties:
+        slug:
+          type: string
+          minLength: 1
+        category:
+          type: string
+          minLength: 1
+        coverImage:
+          type: string
+        featured:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, published]
+        translations:
+          type: array
+          items:
+            type: object
+            properties:
+              locale:
+                $ref: "#/components/schemas/Locale"
+              title:
+                type: string
+                minLength: 1
+              excerpt:
+                type: string
+                minLength: 1
+              body:
+                type: string
+                minLength: 1
+            required:
+              - locale
+              - title
+              - excerpt
+              - body
+      required:
+        - slug
+        - category
+        - status
+        - translations

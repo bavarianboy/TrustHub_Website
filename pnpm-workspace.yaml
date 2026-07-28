@@ -58,6 +58,7 @@ autoInstallPeers: false
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - argon2
   - esbuild
   - msw
   - unrs-resolver

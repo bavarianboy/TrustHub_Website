@@ -5,7 +5,8 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { Locale } from './locale';
 
-export interface HealthStatus {
-  status: string;
-}
+export type GetArticleBySlugParams = {
+locale: Locale;
+};
