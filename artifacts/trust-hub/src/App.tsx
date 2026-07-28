@@ -11,10 +11,11 @@ import { Contact } from "@/pages/Contact";
 import { News } from "@/pages/News";
 import { NewsArticle } from "@/pages/NewsArticle";
 import { Workspace } from "@/pages/Workspace";
+import { useLocale } from "@/hooks/useLocale";
 
 const queryClient = new QueryClient();
 
-function Router() {
+function MarketingRouter() {
   return (
     <MainLayout>
       <Switch>
@@ -32,11 +33,14 @@ function Router() {
 }
 
 function App() {
+  const { localeBase } = useLocale();
+  const appBase = import.meta.env.BASE_URL.replace(/\/$/, "");
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
+        <WouterRouter base={`${appBase}${localeBase}`}>
+          <MarketingRouter />
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

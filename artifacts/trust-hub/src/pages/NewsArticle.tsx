@@ -1,19 +1,34 @@
 import { useParams, Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Calendar, ChevronLeft, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetArticleBySlug } from "@workspace/api-client-react";
 import fallbackImage from "@/assets/images/luxury-abstract.png";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import type { Locale } from "@/i18n";
 
-function formatDate(iso: string | null | undefined): string | null {
+function formatDate(iso: string | null | undefined, locale: string): string | null {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-SA" : "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 export function NewsArticle() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as Locale;
   const { slug } = useParams<{ slug: string }>();
-  const { data: article, isLoading, isError } = useGetArticleBySlug(slug ?? "", { locale: "en" });
+  const { data: article, isLoading, isError } = useGetArticleBySlug(slug ?? "", { locale });
+
+  useDocumentMeta(
+    article?.title ?? t("news.title"),
+    article?.excerpt ?? t("news.subtitle"),
+    slug ? `/news/${slug}` : "/news",
+  );
 
   if (isLoading) {
     return (
@@ -35,13 +50,13 @@ export function NewsArticle() {
       <div className="w-full pt-24 pb-24">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center py-16">
           <AlertCircle size={40} className="mx-auto text-destructive mb-4" />
-          <h1 className="text-2xl font-serif font-bold text-foreground mb-2">Article not found</h1>
+          <h1 className="text-2xl font-serif font-bold text-foreground mb-2">{t("newsArticle.notFoundTitle")}</h1>
           <p className="text-muted-foreground mb-8">
-            This article may have been unpublished or the link is incorrect.
+            {t("newsArticle.notFoundDescription")}
           </p>
           <Button asChild variant="outline">
             <Link href="/news" data-testid="link-back-to-news">
-              <ChevronLeft className="w-4 h-4 mr-1" /> Back to News
+              <ChevronLeft className="w-4 h-4 me-1 rtl:rotate-180" /> {t("newsArticle.backToNews")}
             </Link>
           </Button>
         </div>
@@ -49,7 +64,7 @@ export function NewsArticle() {
     );
   }
 
-  const date = formatDate(article.publishedAt);
+  const date = formatDate(article.publishedAt, locale);
 
   return (
     <div className="w-full pt-24 pb-24">
@@ -59,7 +74,7 @@ export function NewsArticle() {
           className="flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
           data-testid="link-back-to-news"
         >
-          <ChevronLeft size={16} /> Back to News
+          <ChevronLeft size={16} className="rtl:rotate-180" /> {t("newsArticle.backToNews")}
         </Link>
 
         <Badge className="bg-primary text-primary-foreground border-0 mb-4" data-testid="text-article-category">
@@ -80,16 +95,9 @@ export function NewsArticle() {
           </div>
         )}
 
-        {article.coverImage && (
-          <div className="rounded-lg overflow-hidden mb-10 border border-border">
-            <img src={article.coverImage} alt={article.title} className="w-full h-auto object-cover" />
-          </div>
-        )}
-        {!article.coverImage && (
-          <div className="rounded-lg overflow-hidden mb-10 border border-border">
-            <img src={fallbackImage} alt="" className="w-full h-auto object-cover" />
-          </div>
-        )}
+        <div className="rounded-lg overflow-hidden mb-10 border border-border">
+          <img src={article.coverImage ?? fallbackImage} alt={article.title} className="w-full h-auto object-cover" />
+        </div>
 
         <div
           className="prose prose-neutral max-w-none text-foreground prose-headings:font-serif prose-a:text-primary"

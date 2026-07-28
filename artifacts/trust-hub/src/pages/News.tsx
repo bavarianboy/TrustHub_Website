@@ -1,19 +1,27 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Calendar, ChevronRight, Tag, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useListArticles, type ArticleSummary } from "@workspace/api-client-react";
 import fallbackImage from "@/assets/images/luxury-abstract.png";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import type { Locale } from "@/i18n";
 
-function formatDate(iso: string | null | undefined): string | null {
+function formatDate(iso: string | null | undefined, locale: string): string | null {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-SA" : "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
-function ArticleCard({ article, featured }: { article: ArticleSummary; featured: boolean }) {
-  const date = formatDate(article.publishedAt);
+function ArticleCard({ article, featured, locale }: { article: ArticleSummary; featured: boolean; locale: string }) {
+  const { t } = useTranslation();
+  const date = formatDate(article.publishedAt, locale);
 
   return (
     <Link href={`/news/${article.slug}`}>
@@ -28,7 +36,7 @@ function ArticleCard({ article, featured }: { article: ArticleSummary; featured:
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {featured && <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />}
-          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground border-0 text-xs">
+          <Badge className="absolute top-3 start-3 bg-primary text-primary-foreground border-0 text-xs">
             {article.category}
           </Badge>
         </div>
@@ -50,7 +58,7 @@ function ArticleCard({ article, featured }: { article: ArticleSummary; featured:
             {article.excerpt}
           </p>
           <span className="inline-flex items-center gap-1 text-primary text-sm font-semibold group-hover:gap-2 transition-all">
-            Read More <ChevronRight size={featured ? 16 : 14} />
+            {t("news.readMore")} <ChevronRight size={featured ? 16 : 14} className="rtl:rotate-180" />
           </span>
         </div>
       </article>
@@ -59,8 +67,12 @@ function ArticleCard({ article, featured }: { article: ArticleSummary; featured:
 }
 
 export function News() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  useDocumentMeta(t("news.title"), t("news.subtitle"), "/news");
+
   const [activeCategory, setActiveCategory] = useState("All");
-  const { data: articles, isLoading, isError } = useListArticles({ locale: "en" });
+  const { data: articles, isLoading, isError } = useListArticles({ locale });
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set((articles ?? []).map((a) => a.category)));
@@ -85,13 +97,13 @@ export function News() {
               className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6"
               data-testid="text-news-title"
             >
-              News & Insights
+              {t("news.title")}
             </h1>
             <p
               className="text-lg md:text-xl text-muted-foreground leading-relaxed"
               data-testid="text-news-subtitle"
             >
-              Stay informed with the latest regulatory updates, market developments, and expert analysis from our team.
+              {t("news.subtitle")}
             </p>
           </div>
         </div>
@@ -113,7 +125,7 @@ export function News() {
                       : "bg-transparent text-muted-foreground border-border hover:border-primary hover:text-primary"
                   }`}
                 >
-                  {cat}
+                  {cat === "All" ? t("news.allCategory") : cat}
                 </button>
               ))}
             </div>
@@ -142,7 +154,7 @@ export function News() {
         <section className="py-24 bg-background text-center">
           <div className="container mx-auto px-4 md:px-6">
             <AlertCircle size={40} className="mx-auto text-destructive mb-4" />
-            <p className="text-muted-foreground text-lg">Couldn't load articles right now. Please try again shortly.</p>
+            <p className="text-muted-foreground text-lg">{t("news.errorState")}</p>
           </div>
         </section>
       )}
@@ -154,11 +166,11 @@ export function News() {
             <section className="py-16 bg-background">
               <div className="container mx-auto px-4 md:px-6">
                 <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
-                  Featured
+                  {t("news.featured")}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {featured.map((article) => (
-                    <ArticleCard key={article.id} article={article} featured />
+                    <ArticleCard key={article.id} article={article} featured locale={locale} />
                   ))}
                 </div>
               </div>
@@ -171,12 +183,12 @@ export function News() {
               <div className="container mx-auto px-4 md:px-6">
                 {featured.length > 0 && (
                   <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
-                    Latest Articles
+                    {t("news.latestArticles")}
                   </h2>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {regular.map((article) => (
-                    <ArticleCard key={article.id} article={article} featured={false} />
+                    <ArticleCard key={article.id} article={article} featured={false} locale={locale} />
                   ))}
                 </div>
               </div>
@@ -187,7 +199,7 @@ export function News() {
             <section className="py-24 bg-background text-center">
               <div className="container mx-auto px-4 md:px-6">
                 <Tag size={40} className="mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground text-lg">No articles in this category yet.</p>
+                <p className="text-muted-foreground text-lg">{t("news.emptyState")}</p>
               </div>
             </section>
           )}
@@ -198,10 +210,10 @@ export function News() {
       <section className="py-20 bg-foreground text-white">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-            Stay Ahead of Regulatory Changes
+            {t("news.newsletterHeading")}
           </h2>
           <p className="text-white/70 max-w-xl mx-auto mb-8 leading-relaxed">
-            Subscribe to our newsletter and receive expert updates on Saudi business regulations, market developments, and Trust Hub news directly to your inbox.
+            {t("news.newsletterParagraph")}
           </p>
           <form
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
@@ -209,7 +221,7 @@ export function News() {
           >
             <input
               type="email"
-              placeholder="Your email address"
+              placeholder={t("news.newsletterPlaceholder")}
               className="flex-1 px-4 py-3 rounded-sm bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-primary"
               data-testid="input-newsletter-email"
             />
@@ -218,7 +230,7 @@ export function News() {
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm px-6 whitespace-nowrap"
               data-testid="button-newsletter-subscribe"
             >
-              Subscribe
+              {t("news.newsletterButton")}
             </Button>
           </form>
         </div>

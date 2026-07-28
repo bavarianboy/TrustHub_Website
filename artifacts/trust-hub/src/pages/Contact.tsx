@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +11,8 @@ import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CreateLeadBody } from "@workspace/api-zod";
 import { useCreateLead } from "@workspace/api-client-react";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import type { Locale } from "@/i18n";
 
 // website is a honeypot: never shown to real visitors, so any value submitted
 // through it means the form was filled in by a bot, not a person.
@@ -17,8 +20,11 @@ const contactFormSchema = CreateLeadBody.omit({ locale: true });
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export function Contact() {
+  const { t, i18n } = useTranslation();
+  useDocumentMeta(t("contact.title"), t("contact.subtitle"), "/contact");
   const { toast } = useToast();
   const createLead = useCreateLead();
+  const serviceOptions = t("contact.serviceOptions", { returnObjects: true }) as string[];
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -35,19 +41,19 @@ export function Contact() {
 
   const onSubmit = (values: ContactFormValues) => {
     createLead.mutate(
-      { data: { ...values, locale: "en" } },
+      { data: { ...values, locale: i18n.language as Locale } },
       {
         onSuccess: () => {
           toast({
-            title: "Message Sent Successfully",
-            description: "An advisor will contact you shortly.",
+            title: t("contact.toastSuccessTitle"),
+            description: t("contact.toastSuccessDescription"),
           });
           form.reset();
         },
         onError: () => {
           toast({
-            title: "Something went wrong",
-            description: "We couldn't send your message. Please try again or call us directly.",
+            title: t("contact.toastErrorTitle"),
+            description: t("contact.toastErrorDescription"),
             variant: "destructive",
           });
         },
@@ -61,10 +67,10 @@ export function Contact() {
 
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6" data-testid="text-contact-title">
-            Get in Touch
+            {t("contact.title")}
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Reach out to our executive team to discuss how Trust Hub can support your business objectives in Saudi Arabia.
+            {t("contact.subtitle")}
           </p>
         </div>
 
@@ -73,18 +79,16 @@ export function Contact() {
           {/* Contact Information */}
           <div className="lg:w-1/3 space-y-10">
             <div>
-              <h3 className="text-2xl font-serif font-bold text-foreground mb-6">Contact Information</h3>
+              <h3 className="text-2xl font-serif font-bold text-foreground mb-6">{t("contact.infoHeading")}</h3>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-full text-primary shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">Head Office</h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      King Fahd Road, Olaya District<br />
-                      P.O. Box 12345<br />
-                      Riyadh, Saudi Arabia
+                    <h4 className="font-bold text-foreground mb-1">{t("contact.headOffice")}</h4>
+                    <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
+                      {t("contact.headOfficeAddress")}
                     </p>
                   </div>
                 </div>
@@ -94,10 +98,9 @@ export function Contact() {
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">Phone</h4>
-                    <p className="text-muted-foreground text-sm">
-                      +966 11 234 5678<br />
-                      +966 50 123 4567
+                    <h4 className="font-bold text-foreground mb-1">{t("contact.phone")}</h4>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line" dir="ltr">
+                      {t("contact.phoneNumbers")}
                     </p>
                   </div>
                 </div>
@@ -107,10 +110,9 @@ export function Contact() {
                     <Mail className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">Email</h4>
-                    <p className="text-muted-foreground text-sm">
-                      info@trusthub.com.sa<br />
-                      support@trusthub.com.sa
+                    <h4 className="font-bold text-foreground mb-1">{t("contact.email")}</h4>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line" dir="ltr">
+                      {t("contact.emailAddresses")}
                     </p>
                   </div>
                 </div>
@@ -120,10 +122,9 @@ export function Contact() {
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">Business Hours</h4>
-                    <p className="text-muted-foreground text-sm">
-                      Sunday - Thursday<br />
-                      8:00 AM - 5:00 PM
+                    <h4 className="font-bold text-foreground mb-1">{t("contact.businessHours")}</h4>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">
+                      {t("contact.businessHoursValue")}
                     </p>
                   </div>
                 </div>
@@ -131,9 +132,9 @@ export function Contact() {
             </div>
 
             <div className="p-8 bg-foreground text-white rounded-sm">
-              <h4 className="font-serif font-bold text-xl mb-4">Dedicated Support</h4>
+              <h4 className="font-serif font-bold text-xl mb-4">{t("contact.supportHeading")}</h4>
               <p className="text-white/70 text-sm leading-relaxed mb-6">
-                Existing clients have access to our 24/7 dedicated support line. Please refer to your client portal for the emergency contact number.
+                {t("contact.supportParagraph")}
               </p>
             </div>
           </div>
@@ -141,7 +142,7 @@ export function Contact() {
           {/* Contact Form */}
           <div className="lg:w-2/3">
             <div className="bg-background border border-border rounded-sm shadow-xl p-8 md:p-12">
-              <h3 className="text-2xl font-serif font-bold text-foreground mb-8">Send us a Message</h3>
+              <h3 className="text-2xl font-serif font-bold text-foreground mb-8">{t("contact.formHeading")}</h3>
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -151,10 +152,10 @@ export function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{t("contact.fields.name")}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="John Doe"
+                              placeholder={t("contact.fields.namePlaceholder")}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-name"
                               {...field}
@@ -169,10 +170,10 @@ export function Contact() {
                       name="company"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Company Name</FormLabel>
+                          <FormLabel>{t("contact.fields.company")}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Acme Corp"
+                              placeholder={t("contact.fields.companyPlaceholder")}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-company"
                               {...field}
@@ -190,13 +191,14 @@ export function Contact() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                          <FormLabel>{t("contact.fields.email")}</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="john@example.com"
+                              placeholder={t("contact.fields.emailPlaceholder")}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-email"
+                              dir="ltr"
                               {...field}
                             />
                           </FormControl>
@@ -209,13 +211,14 @@ export function Contact() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel>{t("contact.fields.phone")}</FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
-                              placeholder="+966 5X XXX XXXX"
+                              placeholder={t("contact.fields.phonePlaceholder")}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-phone"
+                              dir="ltr"
                               {...field}
                             />
                           </FormControl>
@@ -230,20 +233,17 @@ export function Contact() {
                     name="service"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Service of Interest</FormLabel>
+                        <FormLabel>{t("contact.fields.service")}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-secondary/50 focus:ring-primary" data-testid="select-contact-service">
-                              <SelectValue placeholder="Select a service" />
+                              <SelectValue placeholder={t("contact.fields.servicePlaceholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Business Setup & Licensing">Business Setup & Licensing</SelectItem>
-                            <SelectItem value="PRO Services">PRO Services</SelectItem>
-                            <SelectItem value="HR & Payroll Solutions">HR & Payroll Solutions</SelectItem>
-                            <SelectItem value="Accounting & Tax Compliance">Accounting & Tax Compliance</SelectItem>
-                            <SelectItem value="Business Consultancy">Business Consultancy</SelectItem>
-                            <SelectItem value="Other / General Inquiry">Other / General Inquiry</SelectItem>
+                            {serviceOptions.map((option) => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -256,10 +256,10 @@ export function Contact() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Your Message</FormLabel>
+                        <FormLabel>{t("contact.fields.message")}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="How can we help you?"
+                            placeholder={t("contact.fields.messagePlaceholder")}
                             className="min-h-[150px] bg-secondary/50 focus-visible:ring-primary resize-none"
                             data-testid="input-contact-message"
                             {...field}
@@ -273,7 +273,7 @@ export function Contact() {
                   {/* Honeypot: hidden from real visitors via CSS + tabIndex, not
                       `type="hidden"`, so bots that autofill visible-looking
                       inputs still trip it. */}
-                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <div className="absolute -start-[9999px]" aria-hidden="true">
                     <FormField
                       control={form.control}
                       name="website"
@@ -290,9 +290,9 @@ export function Contact() {
                     data-testid="button-contact-submit"
                   >
                     {createLead.isPending ? (
-                      <span className="flex items-center gap-2">Processing...</span>
+                      <span className="flex items-center gap-2">{t("contact.submitting")}</span>
                     ) : (
-                      <span className="flex items-center gap-2">Send Message <Send className="w-4 h-4" /></span>
+                      <span className="flex items-center gap-2">{t("contact.submitButton")} <Send className="w-4 h-4 rtl:-scale-x-100" /></span>
                     )}
                   </Button>
                 </form>

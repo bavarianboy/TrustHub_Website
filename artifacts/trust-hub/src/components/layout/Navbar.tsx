@@ -1,11 +1,14 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Languages } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import logoPath from "@assets/pro_180_1782647507368.jpg";
 
 export function Navbar() {
   const [location] = useLocation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -20,13 +23,20 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Services", path: "/services" },
-    { name: "News", path: "/news" },
-    { name: "Workspace", path: "/workspace" },
-    { name: "Contact", path: "/contact" },
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.about"), path: "/about" },
+    { name: t("nav.services"), path: "/services" },
+    { name: t("nav.news"), path: "/news" },
+    { name: t("nav.workspace"), path: "/workspace" },
+    { name: t("nav.contact"), path: "/contact" },
   ];
+
+  // location here is already relative to the locale-scoped router's base, so
+  // it's exactly the path to preserve when switching to the other language.
+  const appBase = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const otherLocaleHref =
+    locale === "ar" ? `${appBase}${location === "/" ? "" : location}` : `${appBase}/ar${location === "/" ? "" : location}`;
+  const otherLocaleLabel = locale === "ar" ? "English" : "العربية";
 
   const useDarkText = isScrolled || !isHomePage;
 
@@ -46,7 +56,7 @@ export function Navbar() {
               TRUST HUB
             </span>
             <span className={`text-[10px] tracking-wider uppercase font-semibold ${useDarkText ? "text-muted-foreground" : "text-white/80"}`}>
-              Business Solutions
+              {t("nav.tagline")}
             </span>
           </div>
         </Link>
@@ -65,18 +75,28 @@ export function Navbar() {
                       ? "text-foreground"
                       : "text-white/90"
                   }`}
-                  data-testid={`link-nav-${link.name.toLowerCase()}`}
+                  data-testid={`link-nav-${link.path === "/" ? "home" : link.path.slice(1)}`}
                 >
                   {link.name}
                 </Link>
               </li>
             ))}
           </ul>
+          <a
+            href={otherLocaleHref}
+            className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+              useDarkText ? "text-foreground" : "text-white/90"
+            }`}
+            data-testid="link-language-switch"
+          >
+            <Languages size={16} />
+            {otherLocaleLabel}
+          </a>
           <Button
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-sm px-6"
             asChild
           >
-            <Link href="/contact" data-testid="button-get-started">Get Started</Link>
+            <Link href="/contact" data-testid="button-get-started">{t("nav.getStarted")}</Link>
           </Button>
         </div>
 
@@ -109,19 +129,27 @@ export function Navbar() {
                     location === link.path ? "text-primary" : "text-foreground"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
-                  data-testid={`link-mobile-nav-${link.name.toLowerCase()}`}
+                  data-testid={`link-mobile-nav-${link.path === "/" ? "home" : link.path.slice(1)}`}
                 >
                   {link.name}
                 </Link>
               </li>
             ))}
           </ul>
+          <a
+            href={otherLocaleHref}
+            className="mt-8 flex items-center gap-1.5 text-foreground font-medium"
+            data-testid="link-mobile-language-switch"
+          >
+            <Languages size={18} />
+            {otherLocaleLabel}
+          </a>
           <Button
             className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-sm px-8 py-6 text-lg"
             asChild
             onClick={() => setMobileMenuOpen(false)}
           >
-            <Link href="/contact" data-testid="button-mobile-get-started">Get Started</Link>
+            <Link href="/contact" data-testid="button-mobile-get-started">{t("nav.getStarted")}</Link>
           </Button>
         </div>
       </div>
