@@ -9,6 +9,7 @@ import { About } from "@/pages/About";
 import { Services } from "@/pages/Services";
 import { Contact } from "@/pages/Contact";
 import { News } from "@/pages/News";
+import { NewsArticle } from "@/pages/NewsArticle";
 import { Workspace } from "@/pages/Workspace";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/services" component={Services} />
         <Route path="/news" component={News} />
+        <Route path="/news/:slug" component={NewsArticle} />
         <Route path="/workspace" component={Workspace} />
         <Route path="/contact" component={Contact} />
         <Route component={NotFound} />

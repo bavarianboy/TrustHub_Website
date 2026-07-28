@@ -1,86 +1,76 @@
-import { useState } from "react";
-import { Calendar, Clock, ChevronRight, Tag } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link } from "wouter";
+import { Calendar, ChevronRight, Tag, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useListArticles, type ArticleSummary } from "@workspace/api-client-react";
+import fallbackImage from "@/assets/images/luxury-abstract.png";
 
-const newsArticles = [
-  {
-    id: 1,
-    category: "Business Setup",
-    date: "June 20, 2026",
-    readTime: "4 min read",
-    title: "New Streamlined Procedures for Foreign Company Registration in Saudi Arabia",
-    excerpt:
-      "The Ministry of Investment has announced updated fast-track procedures for foreign entities looking to establish a presence in the Kingdom, reducing approval timelines by up to 40%.",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=60",
-    featured: true,
-  },
-  {
-    id: 2,
-    category: "Tax & Compliance",
-    date: "June 14, 2026",
-    readTime: "5 min read",
-    title: "ZATCA Expands E-Invoicing Requirements: What Businesses Must Know",
-    excerpt:
-      "Phase three of Fatoora e-invoicing compliance is now mandatory for a broader category of taxpayers. Trust Hub breaks down the new obligations and deadlines.",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&auto=format&fit=crop&q=60",
-    featured: true,
-  },
-  {
-    id: 3,
-    category: "HR & Payroll",
-    date: "June 5, 2026",
-    readTime: "3 min read",
-    title: "Saudization (Nitaqat) Updates: 2026 Quota Changes Across Key Sectors",
-    excerpt:
-      "Revised Nitaqat band classifications are set to take effect this quarter. We outline which sectors are impacted and how to prepare your workforce strategy.",
-    image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&auto=format&fit=crop&q=60",
-    featured: false,
-  },
-  {
-    id: 4,
-    category: "Market Insights",
-    date: "May 28, 2026",
-    readTime: "6 min read",
-    title: "Vision 2030 Update: The Sectors Driving Saudi Arabia's Economic Transformation",
-    excerpt:
-      "From tourism to technology, we review the latest progress across Vision 2030 initiatives and identify the most promising sectors for business entry in 2026.",
-    image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=800&auto=format&fit=crop&q=60",
-    featured: false,
-  },
-  {
-    id: 5,
-    category: "Corporate Services",
-    date: "May 19, 2026",
-    readTime: "4 min read",
-    title: "Trust Hub Launches Comprehensive Document Attestation Service",
-    excerpt:
-      "Our new end-to-end attestation service covers Ministry of Foreign Affairs legalization, embassy attestation, and certified translation — all under one roof.",
-    image: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&auto=format&fit=crop&q=60",
-    featured: false,
-  },
-  {
-    id: 6,
-    category: "Business Consultancy",
-    date: "May 10, 2026",
-    readTime: "5 min read",
-    title: "How to Build a Compliant HR Framework for Your Saudi Operation",
-    excerpt:
-      "A practical guide to building employment contracts, leave policies, and disciplinary procedures that align with Saudi Labor Law and protect your business.",
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&auto=format&fit=crop&q=60",
-    featured: false,
-  },
-];
+function formatDate(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
 
-const categories = ["All", "Business Setup", "Tax & Compliance", "HR & Payroll", "Market Insights", "Corporate Services", "Business Consultancy"];
+function ArticleCard({ article, featured }: { article: ArticleSummary; featured: boolean }) {
+  const date = formatDate(article.publishedAt);
+
+  return (
+    <Link href={`/news/${article.slug}`}>
+      <article
+        className="group rounded-lg overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300 cursor-pointer h-full"
+        data-testid={`card-news-${article.slug}`}
+      >
+        <div className={`relative overflow-hidden ${featured ? "h-60" : "h-48"}`}>
+          <img
+            src={article.coverImage ?? fallbackImage}
+            alt={article.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {featured && <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />}
+          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground border-0 text-xs">
+            {article.category}
+          </Badge>
+        </div>
+        <div className={featured ? "p-6" : "p-5"}>
+          {date && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
+              <Calendar size={featured ? 12 : 11} />
+              {date}
+            </div>
+          )}
+          <h3
+            className={`font-serif font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-snug ${
+              featured ? "text-xl mb-3" : "text-lg"
+            }`}
+          >
+            {article.title}
+          </h3>
+          <p className={`text-muted-foreground text-sm leading-relaxed mb-4 ${featured ? "" : "line-clamp-3"}`}>
+            {article.excerpt}
+          </p>
+          <span className="inline-flex items-center gap-1 text-primary text-sm font-semibold group-hover:gap-2 transition-all">
+            Read More <ChevronRight size={featured ? 16 : 14} />
+          </span>
+        </div>
+      </article>
+    </Link>
+  );
+}
 
 export function News() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const { data: articles, isLoading, isError } = useListArticles({ locale: "en" });
 
-  const filtered =
-    activeCategory === "All"
-      ? newsArticles
-      : newsArticles.filter((a) => a.category === activeCategory);
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set((articles ?? []).map((a) => a.category)));
+    return ["All", ...unique];
+  }, [articles]);
+
+  const filtered = useMemo(() => {
+    if (!articles) return [];
+    return activeCategory === "All" ? articles : articles.filter((a) => a.category === activeCategory);
+  }, [articles, activeCategory]);
 
   const featured = filtered.filter((a) => a.featured);
   const regular = filtered.filter((a) => !a.featured);
@@ -108,141 +98,100 @@ export function News() {
       </section>
 
       {/* Category Filter */}
-      <section className="py-8 border-b border-border sticky top-[64px] bg-background/95 backdrop-blur-md z-30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap gap-2" data-testid="news-category-filter">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                data-testid={`button-category-${cat.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
-                  activeCategory === cat
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-transparent text-muted-foreground border-border hover:border-primary hover:text-primary"
-                }`}
-              >
-                {cat}
-              </button>
+      {categories.length > 1 && (
+        <section className="py-8 border-b border-border sticky top-[64px] bg-background/95 backdrop-blur-md z-30">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-wrap gap-2" data-testid="news-category-filter">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  data-testid={`button-category-${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                    activeCategory === cat
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-transparent text-muted-foreground border-border hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {isLoading && (
+        <section className="py-16 bg-background">
+          <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-lg overflow-hidden border border-border bg-card">
+                <Skeleton className="h-48 w-full" />
+                <div className="p-5 space-y-3">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Featured Articles */}
-      {featured.length > 0 && (
-        <section className="py-16 bg-background">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
-              Featured
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featured.map((article) => (
-                <article
-                  key={article.id}
-                  className="group rounded-lg overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300 cursor-pointer"
-                  data-testid={`card-news-featured-${article.id}`}
-                >
-                  <div className="relative h-60 overflow-hidden">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
-                    <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground border-0">
-                      {article.category}
-                    </Badge>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} />
-                        {article.date}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={12} />
-                        {article.readTime}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-serif font-bold text-foreground mb-3 group-hover:text-primary transition-colors leading-snug">
-                      {article.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                      {article.excerpt}
-                    </p>
-                    <span className="inline-flex items-center gap-1 text-primary text-sm font-semibold group-hover:gap-2 transition-all">
-                      Read More <ChevronRight size={16} />
-                    </span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
         </section>
       )}
 
-      {/* Regular Articles */}
-      {regular.length > 0 && (
-        <section className={`py-16 ${featured.length > 0 ? "bg-secondary" : "bg-background"}`}>
-          <div className="container mx-auto px-4 md:px-6">
-            {featured.length > 0 && (
-              <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
-                Latest Articles
-              </h2>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {regular.map((article) => (
-                <article
-                  key={article.id}
-                  className="group rounded-lg overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300 cursor-pointer"
-                  data-testid={`card-news-${article.id}`}
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground border-0 text-xs">
-                      {article.category}
-                    </Badge>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={11} />
-                        {article.date}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={11} />
-                        {article.readTime}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-serif font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-snug">
-                      {article.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
-                      {article.excerpt}
-                    </p>
-                    <span className="inline-flex items-center gap-1 text-primary text-sm font-semibold group-hover:gap-2 transition-all">
-                      Read More <ChevronRight size={14} />
-                    </span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {filtered.length === 0 && (
+      {isError && (
         <section className="py-24 bg-background text-center">
           <div className="container mx-auto px-4 md:px-6">
-            <Tag size={40} className="mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground text-lg">No articles in this category yet.</p>
+            <AlertCircle size={40} className="mx-auto text-destructive mb-4" />
+            <p className="text-muted-foreground text-lg">Couldn't load articles right now. Please try again shortly.</p>
           </div>
         </section>
+      )}
+
+      {!isLoading && !isError && (
+        <>
+          {/* Featured Articles */}
+          {featured.length > 0 && (
+            <section className="py-16 bg-background">
+              <div className="container mx-auto px-4 md:px-6">
+                <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
+                  Featured
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {featured.map((article) => (
+                    <ArticleCard key={article.id} article={article} featured />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Regular Articles */}
+          {regular.length > 0 && (
+            <section className={`py-16 ${featured.length > 0 ? "bg-secondary" : "bg-background"}`}>
+              <div className="container mx-auto px-4 md:px-6">
+                {featured.length > 0 && (
+                  <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-8">
+                    Latest Articles
+                  </h2>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {regular.map((article) => (
+                    <ArticleCard key={article.id} article={article} featured={false} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {filtered.length === 0 && (
+            <section className="py-24 bg-background text-center">
+              <div className="container mx-auto px-4 md:px-6">
+                <Tag size={40} className="mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground text-lg">No articles in this category yet.</p>
+              </div>
+            </section>
+          )}
+        </>
       )}
 
       {/* Newsletter CTA */}

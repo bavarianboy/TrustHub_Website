@@ -1,34 +1,64 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { CreateLeadBody } from "@workspace/api-zod";
+import { useCreateLead } from "@workspace/api-client-react";
+
+// website is a honeypot: never shown to real visitors, so any value submitted
+// through it means the form was filled in by a bot, not a person.
+const contactFormSchema = CreateLeadBody.omit({ locale: true });
+type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export function Contact() {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createLead = useCreateLead();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast({
-        title: "Message Sent Successfully",
-        description: "An advisor will contact you shortly.",
-      });
-      (e.target as HTMLFormElement).reset();
-    }, 1000);
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      service: "",
+      message: "",
+      website: "",
+    },
+  });
+
+  const onSubmit = (values: ContactFormValues) => {
+    createLead.mutate(
+      { data: { ...values, locale: "en" } },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Message Sent Successfully",
+            description: "An advisor will contact you shortly.",
+          });
+          form.reset();
+        },
+        onError: () => {
+          toast({
+            title: "Something went wrong",
+            description: "We couldn't send your message. Please try again or call us directly.",
+            variant: "destructive",
+          });
+        },
+      },
+    );
   };
 
   return (
     <div className="w-full pt-24 pb-24">
       <div className="container mx-auto px-4 md:px-6">
-        
+
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6" data-testid="text-contact-title">
             Get in Touch
@@ -39,7 +69,7 @@ export function Contact() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
-          
+
           {/* Contact Information */}
           <div className="lg:w-1/3 space-y-10">
             <div>
@@ -99,7 +129,7 @@ export function Contact() {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-8 bg-foreground text-white rounded-sm">
               <h4 className="font-serif font-bold text-xl mb-4">Dedicated Support</h4>
               <p className="text-white/70 text-sm leading-relaxed mb-6">
@@ -112,71 +142,161 @@ export function Contact() {
           <div className="lg:w-2/3">
             <div className="bg-background border border-border rounded-sm shadow-xl p-8 md:p-12">
               <h3 className="text-2xl font-serif font-bold text-foreground mb-8">Send us a Message</h3>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-foreground">Full Name</label>
-                    <Input id="name" required placeholder="John Doe" className="bg-secondary/50 focus-visible:ring-primary" data-testid="input-contact-name" />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="company" className="text-sm font-medium text-foreground">Company Name</label>
-                    <Input id="company" placeholder="Acme Corp" className="bg-secondary/50 focus-visible:ring-primary" data-testid="input-contact-company" />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</label>
-                    <Input id="email" type="email" required placeholder="john@example.com" className="bg-secondary/50 focus-visible:ring-primary" data-testid="input-contact-email" />
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="John Doe"
+                              className="bg-secondary/50 focus-visible:ring-primary"
+                              data-testid="input-contact-name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="company"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Company Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Acme Corp"
+                              className="bg-secondary/50 focus-visible:ring-primary"
+                              data-testid="input-contact-company"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-sm font-medium text-foreground">Phone Number</label>
-                    <Input id="phone" type="tel" placeholder="+966 5X XXX XXXX" className="bg-secondary/50 focus-visible:ring-primary" data-testid="input-contact-phone" />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email Address</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="john@example.com"
+                              className="bg-secondary/50 focus-visible:ring-primary"
+                              data-testid="input-contact-email"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="tel"
+                              placeholder="+966 5X XXX XXXX"
+                              className="bg-secondary/50 focus-visible:ring-primary"
+                              data-testid="input-contact-phone"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="service" className="text-sm font-medium text-foreground">Service of Interest</label>
-                  <Select name="service" required>
-                    <SelectTrigger className="bg-secondary/50 focus:ring-primary" data-testid="select-contact-service">
-                      <SelectValue placeholder="Select a service" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="setup">Business Setup & Licensing</SelectItem>
-                      <SelectItem value="pro">PRO Services</SelectItem>
-                      <SelectItem value="hr">HR & Payroll Solutions</SelectItem>
-                      <SelectItem value="tax">Accounting & Tax Compliance</SelectItem>
-                      <SelectItem value="consultancy">Business Consultancy</SelectItem>
-                      <SelectItem value="other">Other / General Inquiry</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium text-foreground">Your Message</label>
-                  <Textarea 
-                    id="message" 
-                    required 
-                    placeholder="How can we help you?" 
-                    className="min-h-[150px] bg-secondary/50 focus-visible:ring-primary resize-none"
-                    data-testid="input-contact-message"
+                  <FormField
+                    control={form.control}
+                    name="service"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Service of Interest</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-secondary/50 focus:ring-primary" data-testid="select-contact-service">
+                              <SelectValue placeholder="Select a service" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Business Setup & Licensing">Business Setup & Licensing</SelectItem>
+                            <SelectItem value="PRO Services">PRO Services</SelectItem>
+                            <SelectItem value="HR & Payroll Solutions">HR & Payroll Solutions</SelectItem>
+                            <SelectItem value="Accounting & Tax Compliance">Accounting & Tax Compliance</SelectItem>
+                            <SelectItem value="Business Consultancy">Business Consultancy</SelectItem>
+                            <SelectItem value="Other / General Inquiry">Other / General Inquiry</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold"
-                  disabled={isSubmitting}
-                  data-testid="button-contact-submit"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">Processing...</span>
-                  ) : (
-                    <span className="flex items-center gap-2">Send Message <Send className="w-4 h-4" /></span>
-                  )}
-                </Button>
-              </form>
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="How can we help you?"
+                            className="min-h-[150px] bg-secondary/50 focus-visible:ring-primary resize-none"
+                            data-testid="input-contact-message"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Honeypot: hidden from real visitors via CSS + tabIndex, not
+                      `type="hidden"`, so bots that autofill visible-looking
+                      inputs still trip it. */}
+                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <Input tabIndex={-1} autoComplete="off" {...field} />
+                      )}
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold"
+                    disabled={createLead.isPending}
+                    data-testid="button-contact-submit"
+                  >
+                    {createLead.isPending ? (
+                      <span className="flex items-center gap-2">Processing...</span>
+                    ) : (
+                      <span className="flex items-center gap-2">Send Message <Send className="w-4 h-4" /></span>
+                    )}
+                  </Button>
+                </form>
+              </Form>
             </div>
           </div>
         </div>
