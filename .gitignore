@@ -44,6 +44,11 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Replit
+# Local environment / secrets — .env.example is the committed template
+.env
+.env.*
+!.env.example
+
+# Replit leftovers
 .cache/
 .local/

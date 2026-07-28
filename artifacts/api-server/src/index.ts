@@ -1,13 +1,9 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
+// PORT was mandatory because Replit injected it from artifact.toml; off-platform
+// it falls back to the local development default.
+const rawPort = process.env["PORT"] ?? "5000";
 
 const port = Number(rawPort);
 
