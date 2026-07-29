@@ -177,6 +177,7 @@ export type ServicesContentListItem = {
   title: string;
   description: string;
   features: string[];
+  image?: string;
 };
 
 export interface ServicesContent {
@@ -298,6 +299,10 @@ export interface AdminContactContent {
   ar: ContactContent;
 }
 
+export interface UploadedImage {
+  url: string;
+}
+
 export type LegalPage = typeof LegalPage[keyof typeof LegalPage];
 
 
@@ -352,5 +357,9 @@ locale: Locale;
 
 export type GetLegalContentParams = {
 locale: Locale;
+};
+
+export type AdminUploadImageBody = {
+  file: Blob;
 };
 

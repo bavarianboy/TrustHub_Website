@@ -24,6 +24,8 @@ tags:
     description: Public content for About/Services/Workspace pages
   - name: admin-page-content
     description: Admin editing of About/Services/Workspace page content
+  - name: admin-uploads
+    description: Admin image uploads
 paths:
   /healthz:
     get:
@@ -455,6 +457,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LegalContent"
+
+  /admin/uploads:
+    post:
+      operationId: adminUploadImage
+      tags: [admin-uploads]
+      summary: Upload an image, returning its public URL (requires admin session)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "201":
+          description: Uploaded image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadedImage"
+        "400":
+          description: Invalid file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /admin/page-content/legal/{page}:
     get:
@@ -1016,6 +1054,11 @@ components:
                 type: array
                 items:
                   type: string
+              # Optional (not in `required`) so existing rows without an image
+              # still parse — an empty string is the "no image set" sentinel,
+              # matching the EMPTY_VALUES convention used across every editor.
+              image:
+                type: string
             required: [id, title, description, features]
         ctaHeading:
           type: string
@@ -1306,6 +1349,13 @@ components:
         ar:
           $ref: "#/components/schemas/ContactContent"
       required: [en, ar]
+
+    UploadedImage:
+      type: object
+      properties:
+        url:
+          type: string
+      required: [url]
 
     LegalPage:
       type: string

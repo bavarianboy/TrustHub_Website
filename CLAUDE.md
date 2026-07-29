@@ -42,6 +42,27 @@ can't infer from the code.
   and `Contact.tsx` fetch `useGetContactContent({ locale })` independently for
   address/phone/hours/socialLinks — there is no longer a static copy in
   `i18n/locales/*.json` to drift out of sync.
+- **Each service on `/services` can have a real uploaded image.**
+  `ServicesContent.list[].image` is a plain string URL, optional (not in
+  `required`) so pre-existing rows without one still parse — an empty string
+  is the "no image" sentinel, same convention as everywhere else. Real file
+  upload, not a pasted URL: `POST /admin/uploads` (`artifacts/api-server/src/
+  routes/admin/uploads.ts`) takes a `multipart/form-data` file via `multer`,
+  validates it's JPEG/PNG/WebP/GIF and ≤5MB, writes it to `artifacts/
+  api-server/uploads/` (gitignored — dev-only local disk; swap for
+  S3-compatible object storage before production) under a random UUID
+  filename, and returns `{ url: "/api/uploads/<uuid>.<ext> " }`. That
+  directory is served back out via `express.static` mounted at
+  `/api/uploads` in `app.ts`, unauthenticated (only the upload POST is
+  session-gated) — the returned URL is a plain path, so `<img src>` works
+  directly in both dev (Vite proxies `/api` to the API server) and prod
+  (same origin, same process). Like `socialLinks`, an image is
+  locale-independent data living inside a per-locale JSONB row: `ServicesEditor.tsx`
+  writes any upload to `en.list[idx].image` **and** `ar.list[idx].image` in
+  the same `setValue` call (not deferred to submit, unlike `socialLinks`),
+  so the two tabs' previews never disagree even mid-edit. On `/services`,
+  `service.image` falsy (missing or `""`) falls back to the original
+  icon-in-a-box placeholder — never a broken `<img>`.
 - **The admin panel is real**, at `/admin` (`src/admin/`), English-only,
   lazy-loaded so its ~61KB chunk never ships to marketing-site visitors.
   Login, a leads inbox (status filter, CSV export, inline status change), an
@@ -220,6 +241,17 @@ Two traps that came from that origin:
   inject. Hit this wrapping an `<Input>` + `<datalist>` together in
   `ArticleEditor.tsx`'s category field — fix was moving the `<datalist>`
   outside `<FormControl>`, as a sibling, not a fix to `FormControl` itself.
+- **Every shadcn `FormLabel`/`FormControl`/`FormDescription`/`FormMessage`
+  calls `useFormField()`, which throws unless it's rendered inside a
+  `<FormField>`'s `render` callback** — there's no fallback, it crashes the
+  whole page (`"useFormField should be used within <FormField>"`), not just
+  that one element. Bit this twice while adding one-off UI (a static hint
+  paragraph, a field-less "Image" section label) next to `<FormField>` blocks
+  in `ContactEditor.tsx` and `ServicesEditor.tsx` — both times the fix was a
+  plain `<p>`/text element instead of the shadcn Form component, not moving
+  anything inside a `FormField`. Reach for a plain element, not `FormLabel`
+  or `FormDescription`, for any label/hint that isn't paired 1:1 with a
+  registered form field.
 - **React Query's default `retry: 3` turns an expected 401 into a multi-second
   spinner.** `useGetCurrentUser()` 401s on every first visit to `/admin` (not
   logged in yet) — with default retries, that's three backed-off attempts

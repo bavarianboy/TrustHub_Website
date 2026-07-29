@@ -52,3 +52,7 @@ Thumbs.db
 # Replit leftovers
 .cache/
 .local/
+
+# Locally uploaded admin images (dev only — production should use object
+# storage, see CLAUDE.md)
+artifacts/api-server/uploads/

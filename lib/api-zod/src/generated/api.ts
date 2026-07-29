@@ -337,7 +337,8 @@ export const GetServicesContentResponse = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -462,6 +463,18 @@ export const GetLegalContentResponse = zod.object({
   "title": zod.string(),
   "lastUpdated": zod.string(),
   "body": zod.string()
+})
+
+
+/**
+ * @summary Upload an image, returning its public URL (requires admin session)
+ */
+export const AdminUploadImageBody = zod.object({
+  "file": zod.instanceof(File)
+})
+
+export const AdminUploadImageResponse = zod.object({
+  "url": zod.string()
 })
 
 
@@ -920,7 +933,8 @@ export const AdminGetServicesContentResponse = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -934,7 +948,8 @@ export const AdminGetServicesContentResponse = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -955,7 +970,8 @@ export const AdminUpdateServicesContentBody = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -969,7 +985,8 @@ export const AdminUpdateServicesContentBody = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -986,7 +1003,8 @@ export const AdminUpdateServicesContentResponse = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),
@@ -1000,7 +1018,8 @@ export const AdminUpdateServicesContentResponse = zod.object({
   "id": zod.string(),
   "title": zod.string(),
   "description": zod.string(),
-  "features": zod.array(zod.string())
+  "features": zod.array(zod.string()),
+  "image": zod.string().optional()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),

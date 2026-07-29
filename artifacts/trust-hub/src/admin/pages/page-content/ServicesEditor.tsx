@@ -1,14 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, Plus, Trash2, ImagePlus, X } from "lucide-react";
 import { AdminUpdateServicesContentBody } from "@workspace/api-zod";
 import {
   useAdminGetServicesContent,
   useAdminUpdateServicesContent,
+  useAdminUploadImage,
   getGetServicesContentQueryKey,
   getAdminGetServicesContentQueryKey,
 } from "@workspace/api-client-react";
@@ -24,7 +25,7 @@ type FormValues = z.infer<typeof AdminUpdateServicesContentBody>;
 type Locale = "en" | "ar";
 
 let nextId = 1;
-const emptyService = () => ({ id: `service-${Date.now()}-${nextId++}`, title: "", description: "", features: [] as string[] });
+const emptyService = () => ({ id: `service-${Date.now()}-${nextId++}`, title: "", description: "", features: [] as string[], image: "" });
 const emptyLocale = () => ({
   title: "",
   subtitle: "",
@@ -44,6 +45,8 @@ export function ServicesEditor() {
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useAdminGetServicesContent();
   const update = useAdminUpdateServicesContent();
+  const uploadImage = useAdminUploadImage();
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(AdminUpdateServicesContentBody),
@@ -55,6 +58,27 @@ export function ServicesEditor() {
   }, [data, form]);
 
   const list = useSyncedArray(form, "en.list", "ar.list", emptyService);
+
+  // The image is the same photo for both languages, so it's stored (and
+  // uploaded/cleared) identically at `en.list[idx].image` and
+  // `ar.list[idx].image` rather than being tab-specific like title/description.
+  const setServiceImage = (idx: number, url: string) => {
+    form.setValue(`en.list.${idx}.image`, url);
+    form.setValue(`ar.list.${idx}.image`, url);
+  };
+
+  const handleImageSelect = (idx: number, file: File | undefined) => {
+    if (!file) return;
+    setUploadingIdx(idx);
+    uploadImage.mutate(
+      { data: { file } },
+      {
+        onSuccess: ({ url }) => setServiceImage(idx, url),
+        onError: () => toast({ title: "Image upload failed", variant: "destructive" }),
+        onSettled: () => setUploadingIdx(null),
+      },
+    );
+  };
 
   const onSubmit = (formValues: FormValues) => {
     update.mutate(
@@ -144,6 +168,47 @@ export function ServicesEditor() {
                           <FormControl><Textarea dir={locale === "ar" ? "rtl" : "ltr"} {...field} /></FormControl>
                         </FormItem>
                       )} />
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium leading-none">Image</p>
+                        {form.watch(`en.list.${idx}.image`) ? (
+                          <div className="relative w-40">
+                            <img
+                              src={form.watch(`en.list.${idx}.image`)}
+                              alt=""
+                              className="w-40 h-28 object-cover rounded-sm border border-border"
+                              data-testid={`img-preview-service-${idx}`}
+                            />
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="icon"
+                              className="absolute -top-2 -end-2 h-6 w-6 rounded-full shadow"
+                              onClick={() => setServiceImage(idx, "")}
+                              data-testid={`button-remove-service-image-${idx}`}
+                            >
+                              <X size={12} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex items-center gap-2 w-fit px-3 py-2 border border-dashed border-border rounded-sm text-sm text-muted-foreground cursor-pointer hover:border-primary hover:text-primary transition-colors">
+                            <ImagePlus size={16} />
+                            {uploadingIdx === idx ? "Uploading…" : "Upload image"}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              className="hidden"
+                              disabled={uploadingIdx !== null}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                e.target.value = "";
+                                handleImageSelect(idx, file);
+                              }}
+                              data-testid={`input-service-image-${idx}`}
+                            />
+                          </label>
+                        )}
+                        <p className="text-sm text-muted-foreground">Shown once — the same photo is used for both languages.</p>
+                      </div>
                       <FormField
                         control={form.control}
                         name={`${locale}.list.${idx}.features`}

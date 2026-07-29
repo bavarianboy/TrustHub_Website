@@ -7,6 +7,7 @@ import pageContentRouter from "./page-content";
 import adminLeadsRouter from "./admin/leads";
 import adminArticlesRouter from "./admin/articles";
 import adminPageContentRouter from "./admin/page-content";
+import adminUploadsRouter from "./admin/uploads";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(pageContentRouter);
 router.use("/admin", adminLeadsRouter);
 router.use("/admin", adminArticlesRouter);
 router.use("/admin", adminPageContentRouter);
+router.use("/admin", adminUploadsRouter);
 
 export default router;

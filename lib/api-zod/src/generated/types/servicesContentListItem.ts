@@ -11,4 +11,5 @@ export type ServicesContentListItem = {
   title: string;
   description: string;
   features: string[];
+  image?: string;
 };

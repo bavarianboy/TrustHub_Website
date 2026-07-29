@@ -6,6 +6,7 @@ import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { env } from "./lib/env";
+import { uploadsDir } from "./lib/uploads";
 import { errorHandler } from "./middlewares/error-handler";
 
 const app: Express = express();
@@ -41,6 +42,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Uploaded images are served as plain static files, no auth needed to view
+// them — only the POST that creates them (in router, below) is auth-gated.
+app.use("/api/uploads", express.static(uploadsDir));
 app.use("/api", router);
 
 app.use(errorHandler);

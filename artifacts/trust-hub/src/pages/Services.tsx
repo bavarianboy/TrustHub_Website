@@ -99,13 +99,24 @@ export function Services() {
                   </div>
 
                   <div className="lg:w-1/2 w-full">
-                    <div className="aspect-[4/3] bg-muted flex items-center justify-center rounded-sm overflow-hidden relative group">
-                      <div className="absolute inset-0 bg-foreground/5 pattern-grid-lg"></div>
-                      <div className="absolute inset-0 bg-gradient-to-tr from-background/40 to-transparent"></div>
-                      <div className="z-10 text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform duration-700">
-                        <Icon className="w-12 h-12" />
+                    {service.image ? (
+                      <div className="aspect-[4/3] rounded-sm overflow-hidden">
+                        <img
+                          src={service.image}
+                          alt={service.title}
+                          className="w-full h-full object-cover"
+                          data-testid={`img-service-${service.id}`}
+                        />
                       </div>
-                    </div>
+                    ) : (
+                      <div className="aspect-[4/3] bg-muted flex items-center justify-center rounded-sm overflow-hidden relative group">
+                        <div className="absolute inset-0 bg-foreground/5 pattern-grid-lg"></div>
+                        <div className="absolute inset-0 bg-gradient-to-tr from-background/40 to-transparent"></div>
+                        <div className="z-10 text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform duration-700">
+                          <Icon className="w-12 h-12" />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

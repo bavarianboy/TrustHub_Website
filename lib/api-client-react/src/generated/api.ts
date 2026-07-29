@@ -28,6 +28,7 @@ import type {
   AdminListLeadsParams,
   AdminServicesContent,
   AdminUpdateLeadStatusBody,
+  AdminUploadImageBody,
   AdminUser,
   AdminWorkspaceContent,
   ArticleDetail,
@@ -48,6 +49,7 @@ import type {
   ListArticlesParams,
   LoginRequest,
   ServicesContent,
+  UploadedImage,
   UpsertArticleRequest,
   WorkspaceContent
 } from './api.schemas';
@@ -1484,6 +1486,78 @@ export function useGetLegalContent<TData = Awaited<ReturnType<typeof getLegalCon
 
 
 
+
+export const getAdminUploadImageUrl = () => {
+
+
+
+
+  return `/api/admin/uploads`
+}
+
+/**
+ * @summary Upload an image, returning its public URL (requires admin session)
+ */
+export const adminUploadImage = async (adminUploadImageBody: AdminUploadImageBody, options?: RequestInit): Promise<UploadedImage> => {
+    const formData = new FormData();
+formData.append(`file`, adminUploadImageBody.file);
+
+  return customFetch<UploadedImage>(getAdminUploadImageUrl(),
+  {
+    ...options,
+    method: 'POST'
+    ,
+    body: formData
+  }
+);}
+
+
+
+
+export const getAdminUploadImageMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUploadImage>>, TError,{data: BodyType<AdminUploadImageBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUploadImage>>, TError,{data: BodyType<AdminUploadImageBody>}, TContext> => {
+
+const mutationKey = ['adminUploadImage'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUploadImage>>, {data: BodyType<AdminUploadImageBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUploadImage(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUploadImageMutationResult = NonNullable<Awaited<ReturnType<typeof adminUploadImage>>>
+    export type AdminUploadImageMutationBody = BodyType<AdminUploadImageBody>
+    export type AdminUploadImageMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Upload an image, returning its public URL (requires admin session)
+ */
+export const useAdminUploadImage = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUploadImage>>, TError,{data: BodyType<AdminUploadImageBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUploadImage>>,
+        TError,
+        {data: BodyType<AdminUploadImageBody>},
+        TContext
+      > => {
+      return useMutation(getAdminUploadImageMutationOptions(options));
+    }
 
 export const getAdminGetLegalContentUrl = (page: LegalPage,) => {
 
