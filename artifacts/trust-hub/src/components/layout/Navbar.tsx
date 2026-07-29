@@ -50,15 +50,10 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 z-50" data-testid="link-logo">
-          <img src={logoPath} alt="Trust Hub Logo" className="h-12 w-12 rounded-full object-cover shadow-sm" />
-          <div className="flex flex-col">
-            <span className={`font-serif font-bold text-lg leading-none ${useDarkText ? "text-foreground" : "text-white"}`}>
-              TRUST HUB
-            </span>
-            <span className={`text-[10px] tracking-wider uppercase font-semibold ${useDarkText ? "text-muted-foreground" : "text-white/80"}`}>
-              {t("nav.tagline")}
-            </span>
-          </div>
+          <img src={logoPath} alt="Trust Hub Logo" className="h-16 w-16 rounded-full object-cover shadow-sm" />
+          <span className={`font-serif font-bold text-xl leading-none ${useDarkText ? "text-foreground" : "text-white"}`}>
+            TRUST HUB
+          </span>
         </Link>
 
         {/* Desktop Nav */}
