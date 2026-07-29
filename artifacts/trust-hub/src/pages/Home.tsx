@@ -33,7 +33,7 @@ export function Home() {
         </div>
 
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-3xl animate-in slide-in-from-bottom-8 duration-700 fade-in">
+          <div className="animate-in slide-in-from-bottom-8 duration-700 fade-in">
             <span className="inline-block py-1 px-3 rounded-full bg-primary/20 text-primary border border-primary/30 text-sm font-semibold tracking-wider uppercase mb-6" data-testid="text-hero-badge">
               {t("home.heroBadge")}
             </span>
