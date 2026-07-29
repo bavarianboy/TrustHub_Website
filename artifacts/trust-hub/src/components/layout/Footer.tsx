@@ -1,7 +1,16 @@
 import { Link } from "wouter";
-import { Linkedin, Twitter, Instagram, Phone } from "lucide-react";
+import { Facebook, Linkedin, Youtube, Instagram } from "lucide-react";
+import { FaTiktok } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import logoPath from "@assets/pro_180_1782647507368.jpg";
+
+const SOCIAL_LINKS = [
+  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/profile.php?id=61574832492270", icon: Facebook },
+  { name: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/110359095", icon: Linkedin },
+  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/@TrustHubSA", icon: Youtube },
+  { name: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@trusthub.ksa", icon: FaTiktok },
+  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/trust_hub_sa", icon: Instagram },
+];
 
 export function Footer() {
   const { t } = useTranslation();
@@ -22,18 +31,19 @@ export function Footer() {
             </Link>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">{t("footer.tagline")}</p>
             <div className="flex items-center gap-4">
-              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="link-social-linkedin">
-                <Linkedin size={18} />
-              </a>
-              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="link-social-twitter">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="link-social-instagram">
-                <Instagram size={18} />
-              </a>
-              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="link-social-whatsapp">
-                <Phone size={18} />
-              </a>
+              {SOCIAL_LINKS.map(({ name, label, href, icon: Icon }) => (
+                <a
+                  key={name}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors"
+                  data-testid={`link-social-${name}`}
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
             </div>
           </div>
 
