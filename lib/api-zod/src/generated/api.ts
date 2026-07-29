@@ -396,6 +396,79 @@ export const GetWorkspaceContentResponse = zod.object({
 
 
 /**
+ * @summary Get Privacy Policy or Terms of Service content
+ */
+export const GetLegalContentParams = zod.object({
+  "page": zod.enum(['privacy', 'terms'])
+})
+
+export const GetLegalContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetLegalContentResponse = zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+})
+
+
+/**
+ * @summary Get Privacy/Terms content in both locales (requires admin session)
+ */
+export const AdminGetLegalContentParams = zod.object({
+  "page": zod.enum(['privacy', 'terms'])
+})
+
+export const AdminGetLegalContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+})
+})
+
+
+/**
+ * @summary Update Privacy/Terms content in both locales (requires admin session)
+ */
+export const AdminUpdateLegalContentParams = zod.object({
+  "page": zod.enum(['privacy', 'terms'])
+})
+
+export const AdminUpdateLegalContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+})
+})
+
+export const AdminUpdateLegalContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "lastUpdated": zod.string(),
+  "body": zod.string()
+})
+})
+
+
+/**
  * @summary Get About content in both locales (requires admin session)
  */
 export const AdminGetAboutContentResponse = zod.object({

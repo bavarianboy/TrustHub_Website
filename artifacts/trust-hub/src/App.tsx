@@ -12,6 +12,7 @@ import { Contact } from "@/pages/Contact";
 import { News } from "@/pages/News";
 import { NewsArticle } from "@/pages/NewsArticle";
 import { Workspace } from "@/pages/Workspace";
+import { LegalPage } from "@/pages/LegalPage";
 import { useLocale } from "@/hooks/useLocale";
 
 // Admin isn't part of the public, bilingual marketing site — it's English-only
@@ -32,6 +33,12 @@ function MarketingRouter() {
         <Route path="/news/:slug" component={NewsArticle} />
         <Route path="/workspace" component={Workspace} />
         <Route path="/contact" component={Contact} />
+        <Route path="/privacy">
+          <LegalPage page="privacy" path="/privacy" />
+        </Route>
+        <Route path="/terms">
+          <LegalPage page="terms" path="/terms" />
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </MainLayout>

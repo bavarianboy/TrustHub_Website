@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request } from "express";
 import { eq } from "drizzle-orm";
 import { db, pageContentTable } from "@workspace/db";
 import {
@@ -11,16 +11,20 @@ import {
   AdminGetWorkspaceContentResponse,
   AdminUpdateWorkspaceContentBody,
   AdminUpdateWorkspaceContentResponse,
+  AdminGetLegalContentResponse,
+  AdminUpdateLegalContentBody,
+  AdminUpdateLegalContentResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../../middlewares/require-auth";
 import { validateBody } from "../../middlewares/validate";
 import { HttpError } from "../../middlewares/error-handler";
+import { requireParam } from "../../lib/params";
 
 const router: IRouter = Router();
 
 router.use(requireAuth);
 
-type Page = "about" | "services" | "workspace";
+type Page = "about" | "services" | "workspace" | "privacy" | "terms";
 
 async function loadBothLocales(page: Page): Promise<{ en: unknown; ar: unknown }> {
   const rows = await db.select().from(pageContentTable).where(eq(pageContentTable.page, page));
@@ -75,6 +79,25 @@ router.get("/page-content/workspace", async (_req, res) => {
 router.put("/page-content/workspace", validateBody(AdminUpdateWorkspaceContentBody), async (req, res) => {
   const body = req.body as { en: unknown; ar: unknown };
   res.json(AdminUpdateWorkspaceContentResponse.parse(await saveBothLocales("workspace", body)));
+});
+
+function parseLegalPage(req: Request): "privacy" | "terms" {
+  const page = requireParam(req, "page");
+  if (page !== "privacy" && page !== "terms") {
+    throw new HttpError(404, "Unknown legal page");
+  }
+  return page;
+}
+
+router.get("/page-content/legal/:page", async (req, res) => {
+  const page = parseLegalPage(req);
+  res.json(AdminGetLegalContentResponse.parse(await loadBothLocales(page)));
+});
+
+router.put("/page-content/legal/:page", validateBody(AdminUpdateLegalContentBody), async (req, res) => {
+  const page = parseLegalPage(req);
+  const body = req.body as { en: unknown; ar: unknown };
+  res.json(AdminUpdateLegalContentResponse.parse(await saveBothLocales(page, body)));
 });
 
 export default router;

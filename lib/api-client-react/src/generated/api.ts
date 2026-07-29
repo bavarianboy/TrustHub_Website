@@ -23,6 +23,7 @@ import type {
   AboutContent,
   AdminAboutContent,
   AdminArticle,
+  AdminLegalContent,
   AdminListLeadsParams,
   AdminServicesContent,
   AdminUpdateLeadStatusBody,
@@ -34,10 +35,13 @@ import type {
   ErrorResponse,
   GetAboutContentParams,
   GetArticleBySlugParams,
+  GetLegalContentParams,
   GetServicesContentParams,
   GetWorkspaceContentParams,
   HealthStatus,
   Lead,
+  LegalContent,
+  LegalPage,
   ListArticlesParams,
   LoginRequest,
   ServicesContent,
@@ -1304,6 +1308,243 @@ export function useGetWorkspaceContent<TData = Awaited<ReturnType<typeof getWork
 
 
 
+
+export const getGetLegalContentUrl = (page: LegalPage,
+    params: GetLegalContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/legal/${page}?${stringifiedParams}` : `/api/page-content/legal/${page}`
+}
+
+/**
+ * @summary Get Privacy Policy or Terms of Service content
+ */
+export const getLegalContent = async (page: LegalPage,
+    params: GetLegalContentParams, options?: RequestInit): Promise<LegalContent> => {
+
+  return customFetch<LegalContent>(getGetLegalContentUrl(page,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetLegalContentQueryKey = (page: LegalPage,
+    params?: GetLegalContentParams,) => {
+    return [
+    `/api/page-content/legal/${page}`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetLegalContentQueryOptions = <TData = Awaited<ReturnType<typeof getLegalContent>>, TError = ErrorType<unknown>>(page: LegalPage,
+    params: GetLegalContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLegalContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetLegalContentQueryKey(page,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLegalContent>>> = ({ signal }) => getLegalContent(page,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: page !== null && page !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getLegalContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetLegalContentQueryResult = NonNullable<Awaited<ReturnType<typeof getLegalContent>>>
+export type GetLegalContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Privacy Policy or Terms of Service content
+ */
+
+export function useGetLegalContent<TData = Awaited<ReturnType<typeof getLegalContent>>, TError = ErrorType<unknown>>(
+ page: LegalPage,
+    params: GetLegalContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLegalContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetLegalContentQueryOptions(page,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminGetLegalContentUrl = (page: LegalPage,) => {
+
+
+
+
+  return `/api/admin/page-content/legal/${page}`
+}
+
+/**
+ * @summary Get Privacy/Terms content in both locales (requires admin session)
+ */
+export const adminGetLegalContent = async (page: LegalPage, options?: RequestInit): Promise<AdminLegalContent> => {
+
+  return customFetch<AdminLegalContent>(getAdminGetLegalContentUrl(page),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetLegalContentQueryKey = (page: LegalPage,) => {
+    return [
+    `/api/admin/page-content/legal/${page}`
+    ] as const;
+    }
+
+
+export const getAdminGetLegalContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetLegalContent>>, TError = ErrorType<ErrorResponse>>(page: LegalPage, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetLegalContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetLegalContentQueryKey(page);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetLegalContent>>> = ({ signal }) => adminGetLegalContent(page, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: page !== null && page !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetLegalContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetLegalContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetLegalContent>>>
+export type AdminGetLegalContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Privacy/Terms content in both locales (requires admin session)
+ */
+
+export function useAdminGetLegalContent<TData = Awaited<ReturnType<typeof adminGetLegalContent>>, TError = ErrorType<ErrorResponse>>(
+ page: LegalPage, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetLegalContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetLegalContentQueryOptions(page,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateLegalContentUrl = (page: LegalPage,) => {
+
+
+
+
+  return `/api/admin/page-content/legal/${page}`
+}
+
+/**
+ * @summary Update Privacy/Terms content in both locales (requires admin session)
+ */
+export const adminUpdateLegalContent = async (page: LegalPage,
+    adminLegalContent: AdminLegalContent, options?: RequestInit): Promise<AdminLegalContent> => {
+
+  return customFetch<AdminLegalContent>(getAdminUpdateLegalContentUrl(page),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminLegalContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateLegalContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLegalContent>>, TError,{page: LegalPage;data: BodyType<AdminLegalContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLegalContent>>, TError,{page: LegalPage;data: BodyType<AdminLegalContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateLegalContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateLegalContent>>, {page: LegalPage;data: BodyType<AdminLegalContent>}> = (props) => {
+          const {page,data} = props ?? {};
+
+          return  adminUpdateLegalContent(page,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateLegalContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateLegalContent>>>
+    export type AdminUpdateLegalContentMutationBody = BodyType<AdminLegalContent>
+    export type AdminUpdateLegalContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Privacy/Terms content in both locales (requires admin session)
+ */
+export const useAdminUpdateLegalContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLegalContent>>, TError,{page: LegalPage;data: BodyType<AdminLegalContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateLegalContent>>,
+        TError,
+        {page: LegalPage;data: BodyType<AdminLegalContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateLegalContentMutationOptions(options));
+    }
 
 export const getAdminGetAboutContentUrl = () => {
 

@@ -6,7 +6,13 @@ import { localeEnum } from "./leads";
 // artifacts/api-server/src/routes/page-content.ts) rather than a generic
 // CMS shape. A JSONB blob per (page, locale) avoids a dozen new relational
 // tables for content that is only ever rendered, never queried/filtered.
-export const pageContentPageEnum = pgEnum("page_content_page", ["about", "services", "workspace"]);
+export const pageContentPageEnum = pgEnum("page_content_page", [
+  "about",
+  "services",
+  "workspace",
+  "privacy",
+  "terms",
+]);
 
 export const pageContentTable = pgTable(
   "page_content",

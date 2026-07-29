@@ -36,21 +36,29 @@ can't infer from the code.
   repeatable seed (re-running it overwrites any admin edits with the
   original static copy).
 - **The admin panel is real**, at `/admin` (`src/admin/`), English-only,
-  lazy-loaded so its ~58KB chunk never ships to marketing-site visitors.
+  lazy-loaded so its ~61KB chunk never ships to marketing-site visitors.
   Login, a leads inbox (status filter, CSV export, inline status change), an
   article editor with EN/AR tabs writing both `article_translations` rows in
-  one save, and page-content editors for About/Services/Workspace (same
-  EN/AR-tabs pattern). `robots.txt` disallows `/admin` and the panel
-  additionally sets `<meta name="robots" content="noindex, nofollow">` while
-  mounted.
+  one save, and page-content editors for About/Services/Workspace/Privacy/
+  Terms (same EN/AR-tabs pattern). `robots.txt` disallows `/admin` and the
+  panel additionally sets `<meta name="robots" content="noindex, nofollow">`
+  while mounted.
 - **The API is real**: `leads`, `auth` (login/logout/me), public `articles`
   and `page-content`, and `admin/leads` + `admin/articles` +
   `admin/page-content` CRUD are implemented, schema-validated end to end, and
   tested against a live Neon database (see `lib/db/src/schema/` and
   `artifacts/api-server/src/routes/`).
-- Placeholder data is still live on the site: `+966 11 000 0000`,
-  `P.O. Box 12345`, `href="#"` social and Privacy/Terms links, and a grey box
-  where the workspace map belongs.
+- **Contact details are real, not placeholders**: address, phone
+  (`+966 54 911 0014`), and email (`advisor@trusthub.com.sa`) are the same
+  across the footer, Contact page, and Workspace page (previously three
+  inconsistent fake numbers). Privacy Policy and Terms of Service pages exist
+  at `/privacy` and `/terms` (draft boilerplate — **not reviewed by counsel**,
+  flagged as such in `scripts/src/seed-legal-content.ts`'s header comment;
+  get real legal review before launch). The Workspace map is a real Google
+  Maps `output=embed` iframe (no API key) pointed at the given address, not a
+  placeholder box. **Social media links are still `href="#"`** — no accounts
+  were provided; don't invent URLs, wire them in in when the user has real
+  ones.
 - **Article `category` is not localized** — it's a single plain column on
   `articlesTable`, not per-locale like title/excerpt/body. An Arabic visitor
   currently sees whatever string the admin typed into Category, in whichever
@@ -237,3 +245,16 @@ Two traps that came from that origin:
   `FormDescription` under that field is the only guard against this today —
   if it becomes a real problem, give `amenities` the same synced-array
   treatment as the object-array fields.
+- **The Google Maps `output=embed` iframe (Workspace page) takes several
+  seconds to paint tiles** — a screenshot or check taken right after the
+  iframe element appears in the DOM will show a blank white box that looks
+  broken but isn't; wait ~5s (or check for actual tile content) before
+  concluding the embed failed. Confirmed working by curl-ing the embed URL
+  directly (follows a redirect to `maps.google.com/maps/embed?...`, 200) and
+  by waiting longer before re-screenshotting.
+- **`sitemap.xml` (`artifacts/trust-hub/public/sitemap.xml`) hardcodes a
+  placeholder domain** (`https://www.trusthub.com.sa`, matching the real
+  email domain) since no production host is chosen yet — update every `<loc>`
+  and the `Sitemap:` line in `robots.txt` once one is. It also only lists the
+  fixed marketing routes; news articles are DB-driven and not included — a
+  real fix would generate their URLs from the API rather than hand-edit XML.

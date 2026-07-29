@@ -232,12 +232,17 @@ export function Workspace() {
                 </div>
               </div>
             </div>
-            <div className="rounded-lg overflow-hidden border border-border h-96 bg-secondary flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <MapPin size={48} className="mx-auto mb-4 text-primary/40" />
-                <p className="text-sm">{content.mapPlaceholder}</p>
-                <p className="text-xs">{content.mapAddress}</p>
-              </div>
+            <div className="rounded-lg overflow-hidden border border-border h-96" dir="ltr">
+              <iframe
+                title="Trust Hub location map"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(content.mapAddress)}&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                data-testid="iframe-workspace-map"
+              />
             </div>
           </div>
         </div>

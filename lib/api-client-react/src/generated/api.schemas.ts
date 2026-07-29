@@ -245,6 +245,25 @@ export interface AdminWorkspaceContent {
   ar: WorkspaceContent;
 }
 
+export type LegalPage = typeof LegalPage[keyof typeof LegalPage];
+
+
+export const LegalPage = {
+  privacy: 'privacy',
+  terms: 'terms',
+} as const;
+
+export interface LegalContent {
+  title: string;
+  lastUpdated: string;
+  body: string;
+}
+
+export interface AdminLegalContent {
+  en: LegalContent;
+  ar: LegalContent;
+}
+
 export type ListArticlesParams = {
 locale: Locale;
 category?: string;
@@ -271,6 +290,10 @@ locale: Locale;
 };
 
 export type GetWorkspaceContentParams = {
+locale: Locale;
+};
+
+export type GetLegalContentParams = {
 locale: Locale;
 };
 

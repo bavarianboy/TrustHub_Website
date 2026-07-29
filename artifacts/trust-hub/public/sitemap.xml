@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static sitemap covering the fixed marketing routes only. News articles are
+  database-driven (artifacts/api-server/src/routes/articles.ts) and are not
+  listed here — a complete sitemap would need to generate their URLs
+  dynamically (e.g. a /sitemap.xml route on the API server that queries
+  published articles), which is a reasonable next step but out of scope for
+  this pass.
+
+  Domain is a placeholder (trusthub.com.sa, matching the site's email domain)
+  until a production host is chosen — update every <loc> below once it is.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.trusthub.com.sa/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/about</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/about"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/about"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/services</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/services"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/news</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/news"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/news"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/news"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/workspace</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/workspace"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/workspace"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/workspace"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/contact"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/privacy"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/terms"/>
+  </url>
+</urlset>

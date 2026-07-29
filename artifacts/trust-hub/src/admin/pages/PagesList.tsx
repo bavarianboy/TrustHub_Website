@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 
 const PAGES = [
-  { path: "/pages/about", name: "About", description: "Our story, legacy, and values" },
-  { path: "/pages/services", name: "Services", description: "The 6 service categories and their details" },
-  { path: "/pages/workspace", name: "Workspace", description: "Workspace types, amenities, location, and FAQ" },
+  { slug: "about", path: "/pages/about", name: "About", description: "Our story, legacy, and values" },
+  { slug: "services", path: "/pages/services", name: "Services", description: "The 6 service categories and their details" },
+  { slug: "workspace", path: "/pages/workspace", name: "Workspace", description: "Workspace types, amenities, location, and FAQ" },
+  { slug: "privacy", path: "/pages/legal/privacy", name: "Privacy Policy", description: "Privacy policy text" },
+  { slug: "terms", path: "/pages/legal/terms", name: "Terms of Service", description: "Terms of service text" },
 ];
 
 export function PagesList() {
@@ -15,7 +17,7 @@ export function PagesList() {
       <div className="mb-8">
         <h1 className="text-2xl font-serif font-bold text-foreground">Pages</h1>
         <p className="text-muted-foreground text-sm">
-          Content for the About, Services, and Workspace marketing pages, in English and Arabic.
+          Content for the About, Services, Workspace, and legal pages, in English and Arabic.
         </p>
       </div>
 
@@ -30,11 +32,11 @@ export function PagesList() {
           </TableHeader>
           <TableBody>
             {PAGES.map((page) => (
-              <TableRow key={page.path} data-testid={`row-page-${page.name.toLowerCase()}`}>
+              <TableRow key={page.path} data-testid={`row-page-${page.slug}`}>
                 <TableCell className="font-medium">{page.name}</TableCell>
                 <TableCell className="text-muted-foreground text-sm">{page.description}</TableCell>
                 <TableCell className="text-end">
-                  <Button variant="ghost" size="icon" asChild data-testid={`button-edit-page-${page.name.toLowerCase()}`}>
+                  <Button variant="ghost" size="icon" asChild data-testid={`button-edit-page-${page.slug}`}>
                     <Link href={page.path}>
                       <Pencil size={16} />
                     </Link>
