@@ -36,11 +36,13 @@ server refuses to start without one:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Push the schema, then create your first admin login:
+Push the schema, create your first admin login, and seed About/Services/Workspace
+page content (otherwise those three pages have nothing to render):
 
 ```sh
 pnpm run db:push
 pnpm --filter @workspace/scripts run seed-admin -- you@example.com a-strong-password "Your Name"
+pnpm --filter @workspace/scripts run seed-page-content
 ```
 
 ## Run
@@ -101,20 +103,31 @@ Never hand-edit anything under `src/generated/` — it is overwritten on every r
 | `POST /api/auth/logout` | — | Clear the current session |
 | `GET /api/auth/me` | session | Current admin user |
 | `GET /api/articles`, `GET /api/articles/:slug` | — | Published articles, locale-aware (`?locale=en\|ar`) |
+| `GET /api/page-content/{about,services,workspace}` | — | About/Services/Workspace page content, locale-aware |
 | `GET/POST /api/admin/articles`, `PATCH/DELETE /api/admin/articles/:id` | session | Article CRUD, both locale translations at once |
+| `GET/PUT /api/admin/page-content/{about,services,workspace}` | session | Page content, both locales in one request |
 | `GET /api/admin/leads`, `PATCH /api/admin/leads/:id` | session | Lead inbox and status updates |
 
 ## Site structure
 
 - **Marketing site**: `/`, `/about`, `/services`, `/news`, `/news/:slug`,
   `/workspace`, `/contact` — each also served under an `/ar/...` prefix for
-  Arabic (RTL). Copy lives in `artifacts/trust-hub/src/i18n/locales/{en,ar}.json`;
-  add a page by adding its strings there and calling `useTranslation()` /
-  `useDocumentMeta()` in the component, matching the existing pages.
+  Arabic (RTL). Chrome (nav, footer, labels) comes from
+  `artifacts/trust-hub/src/i18n/locales/{en,ar}.json` via `useTranslation()`.
+  About/Services/Workspace page *content* is database-backed instead — see
+  below — everything else follows the i18n-JSON pattern; add a new static
+  page by adding its strings there and calling `useTranslation()` /
+  `useDocumentMeta()` in the component, matching `Contact.tsx` or `News.tsx`.
 - **Admin panel**: `/admin` — English-only, lazy-loaded, session-gated. Log in
-  with a user created via `seed-admin` (above). Leads inbox and an article
-  editor with EN/AR tabs live under `artifacts/trust-hub/src/admin/`.
-  Disallowed in `robots.txt` and tagged `noindex` while mounted.
+  with a user created via `seed-admin` (above). Leads inbox, an article
+  editor with EN/AR tabs, and page-content editors for About/Services/
+  Workspace live under `artifacts/trust-hub/src/admin/`. Disallowed in
+  `robots.txt` and tagged `noindex` while mounted.
+- **About/Services/Workspace content** lives in the `page_content` table
+  (one JSONB row per page × locale), not in the locale JSON files — it's
+  editable at `/admin/pages` without a deploy. `scripts/src/seed-page-content.ts`
+  did the one-time migration from the old static copy; don't re-run it
+  against a database with real admin edits, it overwrites them.
 
 ## History
 

@@ -148,6 +148,103 @@ export interface UpsertArticleRequest {
   translations: UpsertArticleRequestTranslationsItem[];
 }
 
+export type AboutContentValuesItem = {
+  title: string;
+  desc: string;
+};
+
+export interface AboutContent {
+  title: string;
+  subtitle: string;
+  legacyHeading: string;
+  legacyParagraph1: string;
+  legacyParagraph2: string;
+  legacyParagraph3: string;
+  valuesHeading: string;
+  valuesSubtitle: string;
+  values: AboutContentValuesItem[];
+  ctaHeading: string;
+  ctaButton: string;
+}
+
+export interface AdminAboutContent {
+  en: AboutContent;
+  ar: AboutContent;
+}
+
+export type ServicesContentListItem = {
+  id: string;
+  title: string;
+  description: string;
+  features: string[];
+};
+
+export interface ServicesContent {
+  title: string;
+  subtitle: string;
+  keyCapabilities: string;
+  list: ServicesContentListItem[];
+  ctaHeading: string;
+  ctaParagraph: string;
+  ctaButton: string;
+}
+
+export interface AdminServicesContent {
+  en: ServicesContent;
+  ar: ServicesContent;
+}
+
+export type WorkspaceContentTypesItem = {
+  name: string;
+  tagline: string;
+  description: string;
+  features: string[];
+  price: string;
+};
+
+export type WorkspaceContentFaqsItem = {
+  q: string;
+  a: string;
+};
+
+export interface WorkspaceContent {
+  title: string;
+  subtitle: string;
+  bookTour: string;
+  enquireNow: string;
+  offerEyebrow: string;
+  offerHeading: string;
+  getQuote: string;
+  types: WorkspaceContentTypesItem[];
+  amenitiesEyebrow: string;
+  amenitiesHeading: string;
+  amenities: string[];
+  locationEyebrow: string;
+  locationHeading: string;
+  locationParagraph: string;
+  addressLabel: string;
+  addressValue: string;
+  hoursLabel: string;
+  hoursValue: string;
+  phoneLabel: string;
+  phoneValue: string;
+  emailLabel: string;
+  emailValue: string;
+  mapPlaceholder: string;
+  mapAddress: string;
+  faqEyebrow: string;
+  faqHeading: string;
+  faqs: WorkspaceContentFaqsItem[];
+  ctaHeading: string;
+  ctaParagraph: string;
+  ctaButton: string;
+}
+
+export interface AdminWorkspaceContent {
+  en: WorkspaceContent;
+  ar: WorkspaceContent;
+}
+
 export type ListArticlesParams = {
 locale: Locale;
 category?: string;
@@ -163,5 +260,17 @@ status?: LeadStatus;
 
 export type AdminUpdateLeadStatusBody = {
   status: LeadStatus;
+};
+
+export type GetAboutContentParams = {
+locale: Locale;
+};
+
+export type GetServicesContentParams = {
+locale: Locale;
+};
+
+export type GetWorkspaceContentParams = {
+locale: Locale;
 };
 

@@ -297,3 +297,578 @@ export const AdminDeleteArticleParams = zod.object({
 export const AdminDeleteArticleResponse = zod.void()
 
 
+/**
+ * @summary Get About page content
+ */
+export const GetAboutContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetAboutContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+})
+
+
+/**
+ * @summary Get Services page content
+ */
+export const GetServicesContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetServicesContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+
+
+/**
+ * @summary Get Workspace page content
+ */
+export const GetWorkspaceContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetWorkspaceContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+
+
+/**
+ * @summary Get About content in both locales (requires admin session)
+ */
+export const AdminGetAboutContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Update About content in both locales (requires admin session)
+ */
+export const AdminUpdateAboutContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+export const AdminUpdateAboutContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "legacyHeading": zod.string(),
+  "legacyParagraph1": zod.string(),
+  "legacyParagraph2": zod.string(),
+  "legacyParagraph3": zod.string(),
+  "valuesHeading": zod.string(),
+  "valuesSubtitle": zod.string(),
+  "values": zod.array(zod.object({
+  "title": zod.string(),
+  "desc": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Get Services content in both locales (requires admin session)
+ */
+export const AdminGetServicesContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Update Services content in both locales (requires admin session)
+ */
+export const AdminUpdateServicesContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+export const AdminUpdateServicesContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "keyCapabilities": zod.string(),
+  "list": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string())
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Get Workspace content in both locales (requires admin session)
+ */
+export const AdminGetWorkspaceContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Update Workspace content in both locales (requires admin session)
+ */
+export const AdminUpdateWorkspaceContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+export const AdminUpdateWorkspaceContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "bookTour": zod.string(),
+  "enquireNow": zod.string(),
+  "offerEyebrow": zod.string(),
+  "offerHeading": zod.string(),
+  "getQuote": zod.string(),
+  "types": zod.array(zod.object({
+  "name": zod.string(),
+  "tagline": zod.string(),
+  "description": zod.string(),
+  "features": zod.array(zod.string()),
+  "price": zod.string()
+})),
+  "amenitiesEyebrow": zod.string(),
+  "amenitiesHeading": zod.string(),
+  "amenities": zod.array(zod.string()),
+  "locationEyebrow": zod.string(),
+  "locationHeading": zod.string(),
+  "locationParagraph": zod.string(),
+  "addressLabel": zod.string(),
+  "addressValue": zod.string(),
+  "hoursLabel": zod.string(),
+  "hoursValue": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "mapPlaceholder": zod.string(),
+  "mapAddress": zod.string(),
+  "faqEyebrow": zod.string(),
+  "faqHeading": zod.string(),
+  "faqs": zod.array(zod.object({
+  "q": zod.string(),
+  "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+

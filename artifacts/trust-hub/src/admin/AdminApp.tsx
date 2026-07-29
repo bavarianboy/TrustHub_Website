@@ -6,6 +6,10 @@ import { Login } from "./pages/Login";
 import { LeadsInbox } from "./pages/LeadsInbox";
 import { ArticlesList } from "./pages/ArticlesList";
 import { ArticleEditor } from "./pages/ArticleEditor";
+import { PagesList } from "./pages/PagesList";
+import { AboutEditor } from "./pages/page-content/AboutEditor";
+import { ServicesEditor } from "./pages/page-content/ServicesEditor";
+import { WorkspaceEditor } from "./pages/page-content/WorkspaceEditor";
 
 function AdminGate() {
   // A normal, expected state for a fresh visitor is "not logged in" — don't
@@ -35,6 +39,10 @@ function AdminGate() {
         <Route path="/articles" component={ArticlesList} />
         <Route path="/articles/new" component={ArticleEditor} />
         <Route path="/articles/:id" component={ArticleEditor} />
+        <Route path="/pages" component={PagesList} />
+        <Route path="/pages/about" component={AboutEditor} />
+        <Route path="/pages/services" component={ServicesEditor} />
+        <Route path="/pages/workspace" component={WorkspaceEditor} />
         <Route>
           <p className="text-muted-foreground">Page not found.</p>
         </Route>

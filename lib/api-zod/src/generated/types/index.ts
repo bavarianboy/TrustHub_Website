@@ -6,24 +6,37 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './aboutContent';
+export * from './aboutContentValuesItem';
+export * from './adminAboutContent';
 export * from './adminArticle';
 export * from './adminArticleStatus';
 export * from './adminArticleTranslationsItem';
 export * from './adminListLeadsParams';
+export * from './adminServicesContent';
 export * from './adminUpdateLeadStatusBody';
 export * from './adminUser';
+export * from './adminWorkspaceContent';
 export * from './articleDetail';
 export * from './articleDetailStatus';
 export * from './articleSummary';
 export * from './createLeadRequest';
 export * from './errorResponse';
+export * from './getAboutContentParams';
 export * from './getArticleBySlugParams';
+export * from './getServicesContentParams';
+export * from './getWorkspaceContentParams';
 export * from './healthStatus';
 export * from './lead';
 export * from './leadStatus';
 export * from './listArticlesParams';
 export * from './locale';
 export * from './loginRequest';
+export * from './servicesContent';
+export * from './servicesContentListItem';
 export * from './upsertArticleRequest';
 export * from './upsertArticleRequestStatus';
 export * from './upsertArticleRequestTranslationsItem';
+export * from './workspaceContent';
+export * from './workspaceContentFaqsItem';
+export * from './workspaceContentTypesItem';

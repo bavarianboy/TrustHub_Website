@@ -1,13 +1,14 @@
 import { type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Inbox, Newspaper } from "lucide-react";
+import { LogOut, Inbox, Newspaper, FileText } from "lucide-react";
 import { useLogout, getGetCurrentUserQueryKey, type AdminUser } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Leads", path: "/leads", icon: Inbox },
   { label: "Articles", path: "/articles", icon: Newspaper },
+  { label: "Pages", path: "/pages", icon: FileText },
 ];
 
 export function AdminLayout({ user, children }: { user: AdminUser; children: ReactNode }) {
@@ -33,7 +34,10 @@ export function AdminLayout({ user, children }: { user: AdminUser; children: Rea
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = location === item.path || (item.path === "/leads" && location === "/");
+            const active =
+              location === item.path ||
+              location.startsWith(`${item.path}/`) ||
+              (item.path === "/leads" && location === "/");
             return (
               <Link
                 key={item.path}

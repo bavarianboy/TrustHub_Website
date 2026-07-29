@@ -20,6 +20,10 @@ tags:
     description: Admin article management
   - name: admin-leads
     description: Admin lead management
+  - name: page-content
+    description: Public content for About/Services/Workspace pages
+  - name: admin-page-content
+    description: Admin editing of About/Services/Workspace page content
 paths:
   /healthz:
     get:
@@ -352,6 +356,189 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /page-content/about:
+    get:
+      operationId: getAboutContent
+      tags: [page-content]
+      summary: Get About page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: About page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AboutContent"
+
+  /page-content/services:
+    get:
+      operationId: getServicesContent
+      tags: [page-content]
+      summary: Get Services page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Services page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicesContent"
+
+  /page-content/workspace:
+    get:
+      operationId: getWorkspaceContent
+      tags: [page-content]
+      summary: Get Workspace page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Workspace page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceContent"
+
+  /admin/page-content/about:
+    get:
+      operationId: adminGetAboutContent
+      tags: [admin-page-content]
+      summary: Get About content in both locales (requires admin session)
+      responses:
+        "200":
+          description: About content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAboutContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateAboutContent
+      tags: [admin-page-content]
+      summary: Update About content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAboutContent"
+      responses:
+        "200":
+          description: Updated About content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAboutContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/page-content/services:
+    get:
+      operationId: adminGetServicesContent
+      tags: [admin-page-content]
+      summary: Get Services content in both locales (requires admin session)
+      responses:
+        "200":
+          description: Services content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminServicesContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateServicesContent
+      tags: [admin-page-content]
+      summary: Update Services content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminServicesContent"
+      responses:
+        "200":
+          description: Updated Services content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminServicesContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/page-content/workspace:
+    get:
+      operationId: adminGetWorkspaceContent
+      tags: [admin-page-content]
+      summary: Get Workspace content in both locales (requires admin session)
+      responses:
+        "200":
+          description: Workspace content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWorkspaceContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateWorkspaceContent
+      tags: [admin-page-content]
+      summary: Update Workspace content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminWorkspaceContent"
+      responses:
+        "200":
+          description: Updated Workspace content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWorkspaceContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -610,3 +797,237 @@ components:
         - category
         - status
         - translations
+
+    AboutContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        legacyHeading:
+          type: string
+        legacyParagraph1:
+          type: string
+        legacyParagraph2:
+          type: string
+        legacyParagraph3:
+          type: string
+        valuesHeading:
+          type: string
+        valuesSubtitle:
+          type: string
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              desc:
+                type: string
+            required: [title, desc]
+        ctaHeading:
+          type: string
+        ctaButton:
+          type: string
+      required:
+        - title
+        - subtitle
+        - legacyHeading
+        - legacyParagraph1
+        - legacyParagraph2
+        - legacyParagraph3
+        - valuesHeading
+        - valuesSubtitle
+        - values
+        - ctaHeading
+        - ctaButton
+
+    AdminAboutContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/AboutContent"
+        ar:
+          $ref: "#/components/schemas/AboutContent"
+      required: [en, ar]
+
+    ServicesContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        keyCapabilities:
+          type: string
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+              features:
+                type: array
+                items:
+                  type: string
+            required: [id, title, description, features]
+        ctaHeading:
+          type: string
+        ctaParagraph:
+          type: string
+        ctaButton:
+          type: string
+      required:
+        - title
+        - subtitle
+        - keyCapabilities
+        - list
+        - ctaHeading
+        - ctaParagraph
+        - ctaButton
+
+    AdminServicesContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/ServicesContent"
+        ar:
+          $ref: "#/components/schemas/ServicesContent"
+      required: [en, ar]
+
+    WorkspaceContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        bookTour:
+          type: string
+        enquireNow:
+          type: string
+        offerEyebrow:
+          type: string
+        offerHeading:
+          type: string
+        getQuote:
+          type: string
+        types:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              tagline:
+                type: string
+              description:
+                type: string
+              features:
+                type: array
+                items:
+                  type: string
+              price:
+                type: string
+            required: [name, tagline, description, features, price]
+        amenitiesEyebrow:
+          type: string
+        amenitiesHeading:
+          type: string
+        amenities:
+          type: array
+          items:
+            type: string
+        locationEyebrow:
+          type: string
+        locationHeading:
+          type: string
+        locationParagraph:
+          type: string
+        addressLabel:
+          type: string
+        addressValue:
+          type: string
+        hoursLabel:
+          type: string
+        hoursValue:
+          type: string
+        phoneLabel:
+          type: string
+        phoneValue:
+          type: string
+        emailLabel:
+          type: string
+        emailValue:
+          type: string
+        mapPlaceholder:
+          type: string
+        mapAddress:
+          type: string
+        faqEyebrow:
+          type: string
+        faqHeading:
+          type: string
+        faqs:
+          type: array
+          items:
+            type: object
+            properties:
+              q:
+                type: string
+              a:
+                type: string
+            required: [q, a]
+        ctaHeading:
+          type: string
+        ctaParagraph:
+          type: string
+        ctaButton:
+          type: string
+      required:
+        - title
+        - subtitle
+        - bookTour
+        - enquireNow
+        - offerEyebrow
+        - offerHeading
+        - getQuote
+        - types
+        - amenitiesEyebrow
+        - amenitiesHeading
+        - amenities
+        - locationEyebrow
+        - locationHeading
+        - locationParagraph
+        - addressLabel
+        - addressValue
+        - hoursLabel
+        - hoursValue
+        - phoneLabel
+        - phoneValue
+        - emailLabel
+        - emailValue
+        - mapPlaceholder
+        - mapAddress
+        - faqEyebrow
+        - faqHeading
+        - faqs
+        - ctaHeading
+        - ctaParagraph
+        - ctaButton
+
+    AdminWorkspaceContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/WorkspaceContent"
+        ar:
+          $ref: "#/components/schemas/WorkspaceContent"
+      required: [en, ar]

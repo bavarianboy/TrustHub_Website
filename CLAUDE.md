@@ -16,25 +16,38 @@ can't infer from the code.
   (`NewsArticle.tsx`) fetches `useGetArticleBySlug` and renders the full
   article. Missing/unpublished slugs show a not-found state instead of
   crashing.
-- **The site is bilingual (EN/AR).** Every page under `src/pages/` and both
-  layout components pull copy from `src/i18n/locales/{en,ar}.json` via
+- **The site is bilingual (EN/AR).** Chrome — nav, footer, form labels, system
+  messages — pulls copy from `src/i18n/locales/{en,ar}.json` via
   `react-i18next`. `/ar/...` is a real path prefix (see Architecture
   decisions), RTL layout uses Tailwind logical properties throughout, and
   fonts are self-hosted via `@fontsource` (Plus Jakarta Sans / Playfair
   Display for EN, IBM Plex Sans Arabic for AR — swapped via `[dir="rtl"]` in
-  `index.css`). `About.tsx`, `Services.tsx`, and `Workspace.tsx`'s plan data
-  are still literal arrays in the JSON locale files (not DB-backed) — fully
-  translated, just not admin-editable content, unlike articles.
+  `index.css`).
+- **About/Services/Workspace content is DB-backed and admin-editable**, not
+  static JSON — the one exception to the paragraph above. `page_content`
+  (`lib/db/src/schema/page-content.ts`) stores one JSONB blob per
+  (page, locale), typed per page by a dedicated Zod schema
+  (`AboutContent`/`ServicesContent`/`WorkspaceContent` in the OpenAPI spec)
+  rather than a generic CMS shape. Public pages fetch
+  `useGet{About,Services,Workspace}Content({ locale })`; the admin editors
+  at `/admin/pages/*` fetch both locales at once and save both in a single
+  PUT. It was migrated *out* of the locale JSON files in this pass — see
+  `scripts/src/seed-page-content.ts`, a one-time migration script, not a
+  repeatable seed (re-running it overwrites any admin edits with the
+  original static copy).
 - **The admin panel is real**, at `/admin` (`src/admin/`), English-only,
-  lazy-loaded so its ~37KB chunk never ships to marketing-site visitors.
-  Login, a leads inbox (status filter, CSV export, inline status change), and
-  an article editor with EN/AR tabs writing both `article_translations` rows
-  in one save. `robots.txt` disallows `/admin` and the panel additionally sets
-  `<meta name="robots" content="noindex, nofollow">` while mounted.
-- **The API is real**: `leads`, `auth` (login/logout/me), public `articles`,
-  and `admin/leads` + `admin/articles` CRUD are implemented, schema-validated
-  end to end, and tested against a live Neon database (see `lib/db/src/schema/`
-  and `artifacts/api-server/src/routes/`).
+  lazy-loaded so its ~58KB chunk never ships to marketing-site visitors.
+  Login, a leads inbox (status filter, CSV export, inline status change), an
+  article editor with EN/AR tabs writing both `article_translations` rows in
+  one save, and page-content editors for About/Services/Workspace (same
+  EN/AR-tabs pattern). `robots.txt` disallows `/admin` and the panel
+  additionally sets `<meta name="robots" content="noindex, nofollow">` while
+  mounted.
+- **The API is real**: `leads`, `auth` (login/logout/me), public `articles`
+  and `page-content`, and `admin/leads` + `admin/articles` +
+  `admin/page-content` CRUD are implemented, schema-validated end to end, and
+  tested against a live Neon database (see `lib/db/src/schema/` and
+  `artifacts/api-server/src/routes/`).
 - Placeholder data is still live on the site: `+966 11 000 0000`,
   `P.O. Box 12345`, `href="#"` social and Privacy/Terms links, and a grey box
   where the workspace map belongs.
@@ -195,3 +208,32 @@ Two traps that came from that origin:
   is required only to satisfy `UseQueryOptions`'s type (the hook supplies it
   by default at runtime regardless) — omitting it is a type error, not a
   runtime bug, so don't "simplify" it away.
+- **`useForm()` without synchronous `defaultValues` renders every `<Input>`
+  uncontrolled on the first paint**, even if the field is invisible behind an
+  `isLoading` guard — React warns "changing an uncontrolled input to be
+  controlled" the instant `form.reset(fetchedData)` runs in a `useEffect`,
+  because the render that mounted the `<Input>` already committed with
+  `value={undefined}`. Hit this in all three page-content editors (About/
+  Services/Workspace). Fix: pass a same-shaped `EMPTY_VALUES` object (every
+  field `""`, every array `[]`) as `defaultValues`, matching the pattern
+  `ArticleEditor.tsx` already used — never leave `useForm` with no
+  `defaultValues` when the form will later be `.reset()` with async data.
+- **A dual-locale array field (About's `values`, Services' `list`,
+  Workspace's `types`/`faqs`) needs its add/remove to touch both locales'
+  arrays together**, not just the currently-visible tab's. The public pages
+  render `en.values[i]` and `ar.values[i]` as pairs by index — if EN gets 4
+  cards and AR still has 3, they silently misalign rather than erroring.
+  `useSyncedArray` (`admin/pages/page-content/useSyncedArray.ts`) is the
+  shared helper for this; reuse it for any future array field instead of
+  wiring `useFieldArray` per-locale.
+- **`workspace.amenities` and any `features: string[]` field is a plain
+  newline-separated `<Textarea>`, not a synced array** — there's no add/remove
+  UI enforcing matching EN/AR line counts the way `useSyncedArray` does for
+  object arrays (values/list/types/faqs). `amenities` specifically is also
+  rendered by position against a fixed `amenityIcons[idx]` array on the public
+  page, so a mismatched count between locales shows a different number of
+  amenity chips per language, and any index past the 6 known icons silently
+  falls back to a repeated Wifi icon rather than erroring. The editor's
+  `FormDescription` under that field is the only guard against this today —
+  if it becomes a real problem, give `amenities` the same synced-array
+  treatment as the object-array fields.

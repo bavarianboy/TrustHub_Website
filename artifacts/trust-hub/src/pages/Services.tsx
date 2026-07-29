@@ -1,8 +1,11 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Building2, Briefcase, FileText, Calculator, Users, CheckCircle2 } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import { useGetServicesContent } from "@workspace/api-client-react";
+import type { Locale } from "@/i18n";
 
 const serviceIcons: Record<string, typeof Building2> = {
   "business-setup": Building2,
@@ -13,13 +16,32 @@ const serviceIcons: Record<string, typeof Building2> = {
   "corporate-documents": CheckCircle2,
 };
 
-type ServiceCopy = { id: string; title: string; description: string; features: string[] };
-
 export function Services() {
-  const { t } = useTranslation();
-  useDocumentMeta(t("services.title"), t("services.subtitle"), "/services");
+  const { i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  const { data: content, isLoading, isError } = useGetServicesContent({ locale });
 
-  const services = t("services.list", { returnObjects: true }) as ServiceCopy[];
+  useDocumentMeta(content?.title ?? "Services", content?.subtitle ?? "", "/services");
+
+  if (isLoading) {
+    return (
+      <div className="w-full pt-24 pb-24">
+        <div className="container mx-auto px-4 md:px-6 max-w-3xl space-y-6">
+          <Skeleton className="h-12 w-2/3" />
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !content) {
+    return (
+      <div className="w-full pt-24 pb-24 text-center">
+        <p className="text-muted-foreground">Couldn't load this page right now. Please try again shortly.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pt-24">
@@ -28,10 +50,10 @@ export function Services() {
         <div className="container mx-auto px-4 md:px-6 text-center">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6" data-testid="text-services-title">
-              {t("services.title")}
+              {content.title}
             </h1>
             <p className="text-lg md:text-xl text-white/80 leading-relaxed" data-testid="text-services-subtitle">
-              {t("services.subtitle")}
+              {content.subtitle}
             </p>
           </div>
         </div>
@@ -41,7 +63,7 @@ export function Services() {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
           <div className="space-y-24">
-            {services.map((service, index) => {
+            {content.list.map((service, index) => {
               const Icon = serviceIcons[service.id] ?? Building2;
               return (
                 <div
@@ -63,7 +85,7 @@ export function Services() {
 
                     <div className="bg-secondary p-8 rounded-sm border border-border">
                       <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-                        {t("services.keyCapabilities")}
+                        {content.keyCapabilities}
                       </h3>
                       <ul className="space-y-3">
                         {service.features.map((feature, i) => (
@@ -95,12 +117,12 @@ export function Services() {
       {/* CTA */}
       <section className="py-24 bg-primary text-center">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary-foreground mb-6">{t("services.ctaHeading")}</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary-foreground mb-6">{content.ctaHeading}</h2>
           <p className="text-primary-foreground/90 text-lg mb-10">
-            {t("services.ctaParagraph")}
+            {content.ctaParagraph}
           </p>
           <Button size="lg" className="bg-foreground hover:bg-foreground/90 text-white px-8 py-6 text-lg" asChild>
-            <Link href="/contact" data-testid="button-services-cta">{t("services.ctaButton")}</Link>
+            <Link href="/contact" data-testid="button-services-cta">{content.ctaButton}</Link>
           </Button>
         </div>
       </section>

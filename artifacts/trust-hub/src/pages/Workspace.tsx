@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Monitor,
   Users,
@@ -16,20 +17,38 @@ import {
   Briefcase,
 } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import { useGetWorkspaceContent } from "@workspace/api-client-react";
+import type { Locale } from "@/i18n";
 
 const workspaceIcons = [Monitor, Users, Presentation, Briefcase];
 const amenityIcons = [Wifi, Coffee, Monitor, Building2, Users, Presentation];
 
-type WorkspaceTypeCopy = { name: string; tagline: string; description: string; features: string[]; price: string };
-type FaqCopy = { q: string; a: string };
-
 export function Workspace() {
-  const { t } = useTranslation();
-  useDocumentMeta(t("workspace.title"), t("workspace.subtitle"), "/workspace");
+  const { i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  const { data: content, isLoading, isError } = useGetWorkspaceContent({ locale });
 
-  const workspaceTypes = t("workspace.types", { returnObjects: true }) as WorkspaceTypeCopy[];
-  const amenities = t("workspace.amenities", { returnObjects: true }) as string[];
-  const faqs = t("workspace.faqs", { returnObjects: true }) as FaqCopy[];
+  useDocumentMeta(content?.title ?? "Workspace", content?.subtitle ?? "", "/workspace");
+
+  if (isLoading) {
+    return (
+      <div className="w-full pt-24 pb-24">
+        <div className="container mx-auto px-4 md:px-6 max-w-3xl space-y-6">
+          <Skeleton className="h-12 w-2/3" />
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !content) {
+    return (
+      <div className="w-full pt-24 pb-24 text-center">
+        <p className="text-muted-foreground">Couldn't load this page right now. Please try again shortly.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pt-24">
@@ -41,13 +60,13 @@ export function Workspace() {
               className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6"
               data-testid="text-workspace-title"
             >
-              {t("workspace.title")}
+              {content.title}
             </h1>
             <p
               className="text-lg md:text-xl text-muted-foreground leading-relaxed"
               data-testid="text-workspace-subtitle"
             >
-              {t("workspace.subtitle")}
+              {content.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
               <Button
@@ -55,7 +74,7 @@ export function Workspace() {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm px-8"
                 asChild
               >
-                <Link href="/contact" data-testid="button-workspace-book">{t("workspace.bookTour")}</Link>
+                <Link href="/contact" data-testid="button-workspace-book">{content.bookTour}</Link>
               </Button>
               <Button
                 size="lg"
@@ -63,7 +82,7 @@ export function Workspace() {
                 className="rounded-sm px-8"
                 asChild
               >
-                <Link href="/contact" data-testid="button-workspace-enquire">{t("workspace.enquireNow")}</Link>
+                <Link href="/contact" data-testid="button-workspace-enquire">{content.enquireNow}</Link>
               </Button>
             </div>
           </div>
@@ -75,15 +94,15 @@ export function Workspace() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-14">
             <span className="text-sm font-semibold tracking-widest text-primary uppercase">
-              {t("workspace.offerEyebrow")}
+              {content.offerEyebrow}
             </span>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-3">
-              {t("workspace.offerHeading")}
+              {content.offerHeading}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {workspaceTypes.map((ws, idx) => {
+            {content.types.map((ws, idx) => {
               const Icon = workspaceIcons[idx] ?? Monitor;
               return (
                 <div
@@ -116,7 +135,7 @@ export function Workspace() {
                       asChild
                     >
                       <Link href="/contact" data-testid={`button-workspace-enquire-${idx}`}>
-                        {t("workspace.getQuote")}
+                        {content.getQuote}
                       </Link>
                     </Button>
                   </div>
@@ -132,14 +151,14 @@ export function Workspace() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-14">
             <span className="text-sm font-semibold tracking-widest text-primary uppercase">
-              {t("workspace.amenitiesEyebrow")}
+              {content.amenitiesEyebrow}
             </span>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-3">
-              {t("workspace.amenitiesHeading")}
+              {content.amenitiesHeading}
             </h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-            {amenities.map((label, idx) => {
+            {content.amenities.map((label, idx) => {
               const Icon = amenityIcons[idx] ?? Wifi;
               return (
                 <div
@@ -162,13 +181,13 @@ export function Workspace() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="text-sm font-semibold tracking-widest text-primary uppercase">
-                {t("workspace.locationEyebrow")}
+                {content.locationEyebrow}
               </span>
               <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-3 mb-6">
-                {t("workspace.locationHeading")}
+                {content.locationHeading}
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                {t("workspace.locationParagraph")}
+                {content.locationParagraph}
               </p>
               <div className="space-y-5">
                 <div className="flex items-start gap-4" data-testid="text-workspace-address">
@@ -176,9 +195,9 @@ export function Workspace() {
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm mb-0.5">{t("workspace.addressLabel")}</p>
+                    <p className="font-semibold text-foreground text-sm mb-0.5">{content.addressLabel}</p>
                     <p className="text-muted-foreground text-sm whitespace-pre-line">
-                      {t("workspace.addressValue")}
+                      {content.addressValue}
                     </p>
                   </div>
                 </div>
@@ -187,9 +206,9 @@ export function Workspace() {
                     <Clock size={18} />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm mb-0.5">{t("workspace.hoursLabel")}</p>
+                    <p className="font-semibold text-foreground text-sm mb-0.5">{content.hoursLabel}</p>
                     <p className="text-muted-foreground text-sm whitespace-pre-line">
-                      {t("workspace.hoursValue")}
+                      {content.hoursValue}
                     </p>
                   </div>
                 </div>
@@ -198,8 +217,8 @@ export function Workspace() {
                     <Phone size={18} />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm mb-0.5">{t("workspace.phoneLabel")}</p>
-                    <p className="text-muted-foreground text-sm" dir="ltr">{t("workspace.phoneValue")}</p>
+                    <p className="font-semibold text-foreground text-sm mb-0.5">{content.phoneLabel}</p>
+                    <p className="text-muted-foreground text-sm" dir="ltr">{content.phoneValue}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4" data-testid="text-workspace-email">
@@ -207,8 +226,8 @@ export function Workspace() {
                     <Mail size={18} />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm mb-0.5">{t("workspace.emailLabel")}</p>
-                    <p className="text-muted-foreground text-sm" dir="ltr">{t("workspace.emailValue")}</p>
+                    <p className="font-semibold text-foreground text-sm mb-0.5">{content.emailLabel}</p>
+                    <p className="text-muted-foreground text-sm" dir="ltr">{content.emailValue}</p>
                   </div>
                 </div>
               </div>
@@ -216,8 +235,8 @@ export function Workspace() {
             <div className="rounded-lg overflow-hidden border border-border h-96 bg-secondary flex items-center justify-center">
               <div className="text-center text-muted-foreground">
                 <MapPin size={48} className="mx-auto mb-4 text-primary/40" />
-                <p className="text-sm">{t("workspace.mapPlaceholder")}</p>
-                <p className="text-xs">{t("workspace.mapAddress")}</p>
+                <p className="text-sm">{content.mapPlaceholder}</p>
+                <p className="text-xs">{content.mapAddress}</p>
               </div>
             </div>
           </div>
@@ -229,14 +248,14 @@ export function Workspace() {
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
           <div className="text-center mb-14">
             <span className="text-sm font-semibold tracking-widest text-primary uppercase">
-              {t("workspace.faqEyebrow")}
+              {content.faqEyebrow}
             </span>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-3">
-              {t("workspace.faqHeading")}
+              {content.faqHeading}
             </h2>
           </div>
           <div className="space-y-6">
-            {faqs.map((faq, i) => (
+            {content.faqs.map((faq, i) => (
               <div
                 key={i}
                 className="p-6 rounded-lg bg-card border border-border"
@@ -259,17 +278,17 @@ export function Workspace() {
       <section className="py-20 bg-foreground text-white">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-            {t("workspace.ctaHeading")}
+            {content.ctaHeading}
           </h2>
           <p className="text-white/70 max-w-xl mx-auto mb-8 leading-relaxed">
-            {t("workspace.ctaParagraph")}
+            {content.ctaParagraph}
           </p>
           <Button
             size="lg"
             className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm px-10 py-6 text-lg"
             asChild
           >
-            <Link href="/contact" data-testid="button-workspace-cta-tour">{t("workspace.ctaButton")}</Link>
+            <Link href="/contact" data-testid="button-workspace-cta-tour">{content.ctaButton}</Link>
           </Button>
         </div>
       </section>

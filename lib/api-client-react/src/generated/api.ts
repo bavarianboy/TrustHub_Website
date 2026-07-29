@@ -20,20 +20,29 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AboutContent,
+  AdminAboutContent,
   AdminArticle,
   AdminListLeadsParams,
+  AdminServicesContent,
   AdminUpdateLeadStatusBody,
   AdminUser,
+  AdminWorkspaceContent,
   ArticleDetail,
   ArticleSummary,
   CreateLeadRequest,
   ErrorResponse,
+  GetAboutContentParams,
   GetArticleBySlugParams,
+  GetServicesContentParams,
+  GetWorkspaceContentParams,
   HealthStatus,
   Lead,
   ListArticlesParams,
   LoginRequest,
-  UpsertArticleRequest
+  ServicesContent,
+  UpsertArticleRequest,
+  WorkspaceContent
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -1042,5 +1051,698 @@ export const useAdminDeleteArticle = <TError = ErrorType<ErrorResponse>,
         TContext
       > => {
       return useMutation(getAdminDeleteArticleMutationOptions(options));
+    }
+
+export const getGetAboutContentUrl = (params: GetAboutContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/about?${stringifiedParams}` : `/api/page-content/about`
+}
+
+/**
+ * @summary Get About page content
+ */
+export const getAboutContent = async (params: GetAboutContentParams, options?: RequestInit): Promise<AboutContent> => {
+
+  return customFetch<AboutContent>(getGetAboutContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAboutContentQueryKey = (params?: GetAboutContentParams,) => {
+    return [
+    `/api/page-content/about`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetAboutContentQueryOptions = <TData = Awaited<ReturnType<typeof getAboutContent>>, TError = ErrorType<unknown>>(params: GetAboutContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAboutContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAboutContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAboutContent>>> = ({ signal }) => getAboutContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAboutContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAboutContentQueryResult = NonNullable<Awaited<ReturnType<typeof getAboutContent>>>
+export type GetAboutContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get About page content
+ */
+
+export function useGetAboutContent<TData = Awaited<ReturnType<typeof getAboutContent>>, TError = ErrorType<unknown>>(
+ params: GetAboutContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAboutContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAboutContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetServicesContentUrl = (params: GetServicesContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/services?${stringifiedParams}` : `/api/page-content/services`
+}
+
+/**
+ * @summary Get Services page content
+ */
+export const getServicesContent = async (params: GetServicesContentParams, options?: RequestInit): Promise<ServicesContent> => {
+
+  return customFetch<ServicesContent>(getGetServicesContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetServicesContentQueryKey = (params?: GetServicesContentParams,) => {
+    return [
+    `/api/page-content/services`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetServicesContentQueryOptions = <TData = Awaited<ReturnType<typeof getServicesContent>>, TError = ErrorType<unknown>>(params: GetServicesContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getServicesContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetServicesContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getServicesContent>>> = ({ signal }) => getServicesContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getServicesContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetServicesContentQueryResult = NonNullable<Awaited<ReturnType<typeof getServicesContent>>>
+export type GetServicesContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Services page content
+ */
+
+export function useGetServicesContent<TData = Awaited<ReturnType<typeof getServicesContent>>, TError = ErrorType<unknown>>(
+ params: GetServicesContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getServicesContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetServicesContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetWorkspaceContentUrl = (params: GetWorkspaceContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/workspace?${stringifiedParams}` : `/api/page-content/workspace`
+}
+
+/**
+ * @summary Get Workspace page content
+ */
+export const getWorkspaceContent = async (params: GetWorkspaceContentParams, options?: RequestInit): Promise<WorkspaceContent> => {
+
+  return customFetch<WorkspaceContent>(getGetWorkspaceContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetWorkspaceContentQueryKey = (params?: GetWorkspaceContentParams,) => {
+    return [
+    `/api/page-content/workspace`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetWorkspaceContentQueryOptions = <TData = Awaited<ReturnType<typeof getWorkspaceContent>>, TError = ErrorType<unknown>>(params: GetWorkspaceContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkspaceContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetWorkspaceContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkspaceContent>>> = ({ signal }) => getWorkspaceContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWorkspaceContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetWorkspaceContentQueryResult = NonNullable<Awaited<ReturnType<typeof getWorkspaceContent>>>
+export type GetWorkspaceContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Workspace page content
+ */
+
+export function useGetWorkspaceContent<TData = Awaited<ReturnType<typeof getWorkspaceContent>>, TError = ErrorType<unknown>>(
+ params: GetWorkspaceContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkspaceContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetWorkspaceContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminGetAboutContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/about`
+}
+
+/**
+ * @summary Get About content in both locales (requires admin session)
+ */
+export const adminGetAboutContent = async ( options?: RequestInit): Promise<AdminAboutContent> => {
+
+  return customFetch<AdminAboutContent>(getAdminGetAboutContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetAboutContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/about`
+    ] as const;
+    }
+
+
+export const getAdminGetAboutContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetAboutContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetAboutContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetAboutContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetAboutContent>>> = ({ signal }) => adminGetAboutContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetAboutContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetAboutContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetAboutContent>>>
+export type AdminGetAboutContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get About content in both locales (requires admin session)
+ */
+
+export function useAdminGetAboutContent<TData = Awaited<ReturnType<typeof adminGetAboutContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetAboutContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetAboutContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateAboutContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/about`
+}
+
+/**
+ * @summary Update About content in both locales (requires admin session)
+ */
+export const adminUpdateAboutContent = async (adminAboutContent: AdminAboutContent, options?: RequestInit): Promise<AdminAboutContent> => {
+
+  return customFetch<AdminAboutContent>(getAdminUpdateAboutContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminAboutContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateAboutContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateAboutContent>>, TError,{data: BodyType<AdminAboutContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateAboutContent>>, TError,{data: BodyType<AdminAboutContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateAboutContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateAboutContent>>, {data: BodyType<AdminAboutContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateAboutContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateAboutContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateAboutContent>>>
+    export type AdminUpdateAboutContentMutationBody = BodyType<AdminAboutContent>
+    export type AdminUpdateAboutContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update About content in both locales (requires admin session)
+ */
+export const useAdminUpdateAboutContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateAboutContent>>, TError,{data: BodyType<AdminAboutContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateAboutContent>>,
+        TError,
+        {data: BodyType<AdminAboutContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateAboutContentMutationOptions(options));
+    }
+
+export const getAdminGetServicesContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/services`
+}
+
+/**
+ * @summary Get Services content in both locales (requires admin session)
+ */
+export const adminGetServicesContent = async ( options?: RequestInit): Promise<AdminServicesContent> => {
+
+  return customFetch<AdminServicesContent>(getAdminGetServicesContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetServicesContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/services`
+    ] as const;
+    }
+
+
+export const getAdminGetServicesContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetServicesContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetServicesContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetServicesContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetServicesContent>>> = ({ signal }) => adminGetServicesContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetServicesContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetServicesContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetServicesContent>>>
+export type AdminGetServicesContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Services content in both locales (requires admin session)
+ */
+
+export function useAdminGetServicesContent<TData = Awaited<ReturnType<typeof adminGetServicesContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetServicesContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetServicesContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateServicesContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/services`
+}
+
+/**
+ * @summary Update Services content in both locales (requires admin session)
+ */
+export const adminUpdateServicesContent = async (adminServicesContent: AdminServicesContent, options?: RequestInit): Promise<AdminServicesContent> => {
+
+  return customFetch<AdminServicesContent>(getAdminUpdateServicesContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminServicesContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateServicesContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateServicesContent>>, TError,{data: BodyType<AdminServicesContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateServicesContent>>, TError,{data: BodyType<AdminServicesContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateServicesContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateServicesContent>>, {data: BodyType<AdminServicesContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateServicesContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateServicesContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateServicesContent>>>
+    export type AdminUpdateServicesContentMutationBody = BodyType<AdminServicesContent>
+    export type AdminUpdateServicesContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Services content in both locales (requires admin session)
+ */
+export const useAdminUpdateServicesContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateServicesContent>>, TError,{data: BodyType<AdminServicesContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateServicesContent>>,
+        TError,
+        {data: BodyType<AdminServicesContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateServicesContentMutationOptions(options));
+    }
+
+export const getAdminGetWorkspaceContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/workspace`
+}
+
+/**
+ * @summary Get Workspace content in both locales (requires admin session)
+ */
+export const adminGetWorkspaceContent = async ( options?: RequestInit): Promise<AdminWorkspaceContent> => {
+
+  return customFetch<AdminWorkspaceContent>(getAdminGetWorkspaceContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetWorkspaceContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/workspace`
+    ] as const;
+    }
+
+
+export const getAdminGetWorkspaceContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetWorkspaceContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetWorkspaceContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetWorkspaceContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetWorkspaceContent>>> = ({ signal }) => adminGetWorkspaceContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetWorkspaceContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetWorkspaceContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetWorkspaceContent>>>
+export type AdminGetWorkspaceContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Workspace content in both locales (requires admin session)
+ */
+
+export function useAdminGetWorkspaceContent<TData = Awaited<ReturnType<typeof adminGetWorkspaceContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetWorkspaceContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetWorkspaceContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateWorkspaceContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/workspace`
+}
+
+/**
+ * @summary Update Workspace content in both locales (requires admin session)
+ */
+export const adminUpdateWorkspaceContent = async (adminWorkspaceContent: AdminWorkspaceContent, options?: RequestInit): Promise<AdminWorkspaceContent> => {
+
+  return customFetch<AdminWorkspaceContent>(getAdminUpdateWorkspaceContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminWorkspaceContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateWorkspaceContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>, TError,{data: BodyType<AdminWorkspaceContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>, TError,{data: BodyType<AdminWorkspaceContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateWorkspaceContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>, {data: BodyType<AdminWorkspaceContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateWorkspaceContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateWorkspaceContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>>
+    export type AdminUpdateWorkspaceContentMutationBody = BodyType<AdminWorkspaceContent>
+    export type AdminUpdateWorkspaceContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Workspace content in both locales (requires admin session)
+ */
+export const useAdminUpdateWorkspaceContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>, TError,{data: BodyType<AdminWorkspaceContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateWorkspaceContent>>,
+        TError,
+        {data: BodyType<AdminWorkspaceContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateWorkspaceContentMutationOptions(options));
     }
 

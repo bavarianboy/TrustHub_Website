@@ -3,3 +3,4 @@ export * from "./sessions";
 export * from "./leads";
 export * from "./articles";
 export * from "./article-translations";
+export * from "./page-content";
