@@ -8,6 +8,7 @@
     "seed-admin": "tsx --env-file-if-exists=../.env ./src/seed-admin.ts",
     "seed-page-content": "tsx --env-file-if-exists=../.env ./src/seed-page-content.ts",
     "seed-legal-content": "tsx --env-file-if-exists=../.env ./src/seed-legal-content.ts",
+    "seed-contact-content": "tsx --env-file-if-exists=../.env ./src/seed-contact-content.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

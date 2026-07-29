@@ -23,6 +23,10 @@ import type { Locale } from "@/i18n";
 const workspaceIcons = [Monitor, Users, Presentation, Briefcase];
 const amenityIcons = [Wifi, Coffee, Monitor, Building2, Users, Presentation];
 
+// Verified coordinates for the Trust Hub Google Business listing — a text
+// search on the address string doesn't reliably resolve to the right pin.
+const MAP_COORDINATES = "24.6714177,46.7220544";
+
 export function Workspace() {
   const { i18n } = useTranslation();
   const locale = i18n.language as Locale;
@@ -235,7 +239,7 @@ export function Workspace() {
             <div className="rounded-lg overflow-hidden border border-border h-96" dir="ltr">
               <iframe
                 title="Trust Hub location map"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(content.mapAddress)}&output=embed`}
+                src={`https://maps.google.com/maps?q=${MAP_COORDINATES}(Trust+Hub)&output=embed`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

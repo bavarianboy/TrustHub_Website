@@ -396,6 +396,58 @@ export const GetWorkspaceContentResponse = zod.object({
 
 
 /**
+ * @summary Get Contact page content
+ */
+export const GetContactContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetContactContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+})
+
+
+/**
  * @summary Get Privacy Policy or Terms of Service content
  */
 export const GetLegalContentParams = zod.object({
@@ -464,6 +516,281 @@ export const AdminUpdateLegalContentResponse = zod.object({
   "title": zod.string(),
   "lastUpdated": zod.string(),
   "body": zod.string()
+})
+})
+
+
+/**
+ * @summary Get Contact content in both locales (requires admin session)
+ */
+export const AdminGetContactContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+})
+})
+
+
+/**
+ * @summary Update Contact content in both locales (requires admin session)
+ */
+export const AdminUpdateContactContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+})
+})
+
+export const AdminUpdateContactContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "infoHeading": zod.string(),
+  "headOfficeLabel": zod.string(),
+  "addressLine1": zod.string(),
+  "addressLine2": zod.string(),
+  "phoneLabel": zod.string(),
+  "phoneValue": zod.string(),
+  "emailLabel": zod.string(),
+  "emailValue": zod.string(),
+  "businessHoursLabel": zod.string(),
+  "businessHoursValue": zod.string(),
+  "supportHeading": zod.string(),
+  "supportParagraph": zod.string(),
+  "formHeading": zod.string(),
+  "fields": zod.object({
+  "name": zod.string(),
+  "namePlaceholder": zod.string(),
+  "company": zod.string(),
+  "companyPlaceholder": zod.string(),
+  "email": zod.string(),
+  "emailPlaceholder": zod.string(),
+  "phone": zod.string(),
+  "phonePlaceholder": zod.string(),
+  "service": zod.string(),
+  "servicePlaceholder": zod.string(),
+  "message": zod.string(),
+  "messagePlaceholder": zod.string()
+}),
+  "serviceOptions": zod.array(zod.string()),
+  "submitButton": zod.string(),
+  "submitting": zod.string(),
+  "toastSuccessTitle": zod.string(),
+  "toastSuccessDescription": zod.string(),
+  "toastErrorTitle": zod.string(),
+  "toastErrorDescription": zod.string(),
+  "socialLinks": zod.array(zod.object({
+  "name": zod.string(),
+  "label": zod.string(),
+  "href": zod.string()
+}))
 })
 })
 

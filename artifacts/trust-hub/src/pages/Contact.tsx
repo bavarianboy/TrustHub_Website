@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CreateLeadBody } from "@workspace/api-zod";
-import { useCreateLead } from "@workspace/api-client-react";
+import { useCreateLead, useGetContactContent } from "@workspace/api-client-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import type { Locale } from "@/i18n";
 
@@ -20,11 +21,13 @@ const contactFormSchema = CreateLeadBody.omit({ locale: true });
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export function Contact() {
-  const { t, i18n } = useTranslation();
-  useDocumentMeta(t("contact.title"), t("contact.subtitle"), "/contact");
+  const { i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  const { data: content, isLoading, isError } = useGetContactContent({ locale });
   const { toast } = useToast();
   const createLead = useCreateLead();
-  const serviceOptions = t("contact.serviceOptions", { returnObjects: true }) as string[];
+
+  useDocumentMeta(content?.title ?? "Contact", content?.subtitle ?? "", "/contact");
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -40,20 +43,21 @@ export function Contact() {
   });
 
   const onSubmit = (values: ContactFormValues) => {
+    if (!content) return;
     createLead.mutate(
-      { data: { ...values, locale: i18n.language as Locale } },
+      { data: { ...values, locale } },
       {
         onSuccess: () => {
           toast({
-            title: t("contact.toastSuccessTitle"),
-            description: t("contact.toastSuccessDescription"),
+            title: content.toastSuccessTitle,
+            description: content.toastSuccessDescription,
           });
           form.reset();
         },
         onError: () => {
           toast({
-            title: t("contact.toastErrorTitle"),
-            description: t("contact.toastErrorDescription"),
+            title: content.toastErrorTitle,
+            description: content.toastErrorDescription,
             variant: "destructive",
           });
         },
@@ -61,16 +65,36 @@ export function Contact() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="w-full pt-24 pb-24">
+        <div className="container mx-auto px-4 md:px-6 max-w-3xl space-y-6">
+          <Skeleton className="h-12 w-2/3" />
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !content) {
+    return (
+      <div className="w-full pt-24 pb-24 text-center">
+        <p className="text-muted-foreground">Couldn't load this page right now. Please try again shortly.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full pt-24 pb-24">
       <div className="container mx-auto px-4 md:px-6">
 
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6" data-testid="text-contact-title">
-            {t("contact.title")}
+            {content.title}
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            {t("contact.subtitle")}
+            {content.subtitle}
           </p>
         </div>
 
@@ -79,16 +103,16 @@ export function Contact() {
           {/* Contact Information */}
           <div className="lg:w-1/3 space-y-10">
             <div>
-              <h3 className="text-2xl font-serif font-bold text-foreground mb-6">{t("contact.infoHeading")}</h3>
+              <h3 className="text-2xl font-serif font-bold text-foreground mb-6">{content.infoHeading}</h3>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-full text-primary shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">{t("contact.headOffice")}</h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
-                      {t("contact.headOfficeAddress")}
+                    <h4 className="font-bold text-foreground mb-1">{content.headOfficeLabel}</h4>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {content.addressLine1}<br />{content.addressLine2}
                     </p>
                   </div>
                 </div>
@@ -98,9 +122,9 @@ export function Contact() {
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">{t("contact.phone")}</h4>
-                    <p className="text-muted-foreground text-sm whitespace-pre-line" dir="ltr">
-                      {t("contact.phoneNumbers")}
+                    <h4 className="font-bold text-foreground mb-1">{content.phoneLabel}</h4>
+                    <p className="text-muted-foreground text-sm" dir="ltr">
+                      {content.phoneValue}
                     </p>
                   </div>
                 </div>
@@ -110,9 +134,9 @@ export function Contact() {
                     <Mail className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">{t("contact.email")}</h4>
-                    <p className="text-muted-foreground text-sm whitespace-pre-line" dir="ltr">
-                      {t("contact.emailAddresses")}
+                    <h4 className="font-bold text-foreground mb-1">{content.emailLabel}</h4>
+                    <p className="text-muted-foreground text-sm" dir="ltr">
+                      {content.emailValue}
                     </p>
                   </div>
                 </div>
@@ -122,9 +146,9 @@ export function Contact() {
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-1">{t("contact.businessHours")}</h4>
+                    <h4 className="font-bold text-foreground mb-1">{content.businessHoursLabel}</h4>
                     <p className="text-muted-foreground text-sm whitespace-pre-line">
-                      {t("contact.businessHoursValue")}
+                      {content.businessHoursValue}
                     </p>
                   </div>
                 </div>
@@ -132,9 +156,9 @@ export function Contact() {
             </div>
 
             <div className="p-8 bg-foreground text-white rounded-sm">
-              <h4 className="font-serif font-bold text-xl mb-4">{t("contact.supportHeading")}</h4>
+              <h4 className="font-serif font-bold text-xl mb-4">{content.supportHeading}</h4>
               <p className="text-white/70 text-sm leading-relaxed mb-6">
-                {t("contact.supportParagraph")}
+                {content.supportParagraph}
               </p>
             </div>
           </div>
@@ -142,7 +166,7 @@ export function Contact() {
           {/* Contact Form */}
           <div className="lg:w-2/3">
             <div className="bg-background border border-border rounded-sm shadow-xl p-8 md:p-12">
-              <h3 className="text-2xl font-serif font-bold text-foreground mb-8">{t("contact.formHeading")}</h3>
+              <h3 className="text-2xl font-serif font-bold text-foreground mb-8">{content.formHeading}</h3>
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -152,10 +176,10 @@ export function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.fields.name")}</FormLabel>
+                          <FormLabel>{content.fields.name}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder={t("contact.fields.namePlaceholder")}
+                              placeholder={content.fields.namePlaceholder}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-name"
                               {...field}
@@ -170,10 +194,10 @@ export function Contact() {
                       name="company"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.fields.company")}</FormLabel>
+                          <FormLabel>{content.fields.company}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder={t("contact.fields.companyPlaceholder")}
+                              placeholder={content.fields.companyPlaceholder}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-company"
                               {...field}
@@ -191,11 +215,11 @@ export function Contact() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.fields.email")}</FormLabel>
+                          <FormLabel>{content.fields.email}</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder={t("contact.fields.emailPlaceholder")}
+                              placeholder={content.fields.emailPlaceholder}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-email"
                               dir="ltr"
@@ -211,11 +235,11 @@ export function Contact() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.fields.phone")}</FormLabel>
+                          <FormLabel>{content.fields.phone}</FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
-                              placeholder={t("contact.fields.phonePlaceholder")}
+                              placeholder={content.fields.phonePlaceholder}
                               className="bg-secondary/50 focus-visible:ring-primary"
                               data-testid="input-contact-phone"
                               dir="ltr"
@@ -233,15 +257,15 @@ export function Contact() {
                     name="service"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("contact.fields.service")}</FormLabel>
+                        <FormLabel>{content.fields.service}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-secondary/50 focus:ring-primary" data-testid="select-contact-service">
-                              <SelectValue placeholder={t("contact.fields.servicePlaceholder")} />
+                              <SelectValue placeholder={content.fields.servicePlaceholder} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {serviceOptions.map((option) => (
+                            {content.serviceOptions.map((option) => (
                               <SelectItem key={option} value={option}>{option}</SelectItem>
                             ))}
                           </SelectContent>
@@ -256,10 +280,10 @@ export function Contact() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("contact.fields.message")}</FormLabel>
+                        <FormLabel>{content.fields.message}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={t("contact.fields.messagePlaceholder")}
+                            placeholder={content.fields.messagePlaceholder}
                             className="min-h-[150px] bg-secondary/50 focus-visible:ring-primary resize-none"
                             data-testid="input-contact-message"
                             {...field}
@@ -290,9 +314,9 @@ export function Contact() {
                     data-testid="button-contact-submit"
                   >
                     {createLead.isPending ? (
-                      <span className="flex items-center gap-2">{t("contact.submitting")}</span>
+                      <span className="flex items-center gap-2">{content.submitting}</span>
                     ) : (
-                      <span className="flex items-center gap-2">{t("contact.submitButton")} <Send className="w-4 h-4 rtl:-scale-x-100" /></span>
+                      <span className="flex items-center gap-2">{content.submitButton} <Send className="w-4 h-4 rtl:-scale-x-100" /></span>
                     )}
                   </Button>
                 </form>

@@ -413,6 +413,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkspaceContent"
 
+  /page-content/contact:
+    get:
+      operationId: getContactContent
+      tags: [page-content]
+      summary: Get Contact page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Contact page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactContent"
+
   /page-content/legal/{page}:
     get:
       operationId: getLegalContent
@@ -484,6 +503,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminLegalContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/page-content/contact:
+    get:
+      operationId: adminGetContactContent
+      tags: [admin-page-content]
+      summary: Get Contact content in both locales (requires admin session)
+      responses:
+        "200":
+          description: Contact content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminContactContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateContactContent
+      tags: [admin-page-content]
+      summary: Update Contact content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminContactContent"
+      responses:
+        "200":
+          description: Updated Contact content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminContactContent"
         "401":
           description: Not authenticated
           content:
@@ -1108,6 +1169,142 @@ components:
           $ref: "#/components/schemas/WorkspaceContent"
         ar:
           $ref: "#/components/schemas/WorkspaceContent"
+      required: [en, ar]
+
+    ContactContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        infoHeading:
+          type: string
+        headOfficeLabel:
+          type: string
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        phoneLabel:
+          type: string
+        phoneValue:
+          type: string
+        emailLabel:
+          type: string
+        emailValue:
+          type: string
+        businessHoursLabel:
+          type: string
+        businessHoursValue:
+          type: string
+        supportHeading:
+          type: string
+        supportParagraph:
+          type: string
+        formHeading:
+          type: string
+        fields:
+          type: object
+          properties:
+            name:
+              type: string
+            namePlaceholder:
+              type: string
+            company:
+              type: string
+            companyPlaceholder:
+              type: string
+            email:
+              type: string
+            emailPlaceholder:
+              type: string
+            phone:
+              type: string
+            phonePlaceholder:
+              type: string
+            service:
+              type: string
+            servicePlaceholder:
+              type: string
+            message:
+              type: string
+            messagePlaceholder:
+              type: string
+          required:
+            - name
+            - namePlaceholder
+            - company
+            - companyPlaceholder
+            - email
+            - emailPlaceholder
+            - phone
+            - phonePlaceholder
+            - service
+            - servicePlaceholder
+            - message
+            - messagePlaceholder
+        serviceOptions:
+          type: array
+          items:
+            type: string
+        submitButton:
+          type: string
+        submitting:
+          type: string
+        toastSuccessTitle:
+          type: string
+        toastSuccessDescription:
+          type: string
+        toastErrorTitle:
+          type: string
+        toastErrorDescription:
+          type: string
+        socialLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              label:
+                type: string
+              href:
+                type: string
+            required: [name, label, href]
+      required:
+        - title
+        - subtitle
+        - infoHeading
+        - headOfficeLabel
+        - addressLine1
+        - addressLine2
+        - phoneLabel
+        - phoneValue
+        - emailLabel
+        - emailValue
+        - businessHoursLabel
+        - businessHoursValue
+        - supportHeading
+        - supportParagraph
+        - formHeading
+        - fields
+        - serviceOptions
+        - submitButton
+        - submitting
+        - toastSuccessTitle
+        - toastSuccessDescription
+        - toastErrorTitle
+        - toastErrorDescription
+        - socialLinks
+
+    AdminContactContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/ContactContent"
+        ar:
+          $ref: "#/components/schemas/ContactContent"
       required: [en, ar]
 
     LegalPage:

@@ -1,21 +1,26 @@
+import type { ComponentType } from "react";
 import { Link } from "wouter";
-import { Facebook, Linkedin, Youtube, Instagram } from "lucide-react";
+import { Facebook, Linkedin, Youtube, Instagram, Share2 } from "lucide-react";
 import { FaTiktok } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { useGetContactContent } from "@workspace/api-client-react";
 import logoPath from "@assets/pro_180_1782647507368.jpg";
+import type { Locale } from "@/i18n";
 
-const SOCIAL_LINKS = [
-  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/profile.php?id=61574832492270", icon: Facebook },
-  { name: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/110359095", icon: Linkedin },
-  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/@TrustHubSA", icon: Youtube },
-  { name: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@trusthub.ksa", icon: FaTiktok },
-  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/trust_hub_sa", icon: Instagram },
-];
+const SOCIAL_ICONS: Record<string, ComponentType<{ size?: number }>> = {
+  facebook: Facebook,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  tiktok: FaTiktok,
+  instagram: Instagram,
+};
 
 export function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as Locale;
   const currentYear = new Date().getFullYear();
   const services = t("footer.services", { returnObjects: true }) as string[];
+  const { data: contact } = useGetContactContent({ locale });
 
   return (
     <footer className="bg-foreground text-white py-16 md:py-24">
@@ -31,19 +36,22 @@ export function Footer() {
             </Link>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">{t("footer.tagline")}</p>
             <div className="flex items-center gap-4">
-              {SOCIAL_LINKS.map(({ name, label, href, icon: Icon }) => (
-                <a
-                  key={name}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors"
-                  data-testid={`link-social-${name}`}
-                >
-                  <Icon size={18} />
-                </a>
-              ))}
+              {(contact?.socialLinks ?? []).map(({ name, label, href }) => {
+                const Icon = SOCIAL_ICONS[name] ?? Share2;
+                return (
+                  <a
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors"
+                    data-testid={`link-social-${name}`}
+                  >
+                    <Icon size={18} />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -79,15 +87,15 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="text-white/70 text-sm flex items-start gap-3">
                 <span className="text-primary font-bold mt-0.5">A.</span>
-                <span>{t("footer.addressLine1")}<br/>{t("footer.addressLine2")}</span>
+                <span>{contact?.addressLine1}<br/>{contact?.addressLine2}</span>
               </li>
               <li className="text-white/70 text-sm flex items-center gap-3">
                 <span className="text-primary font-bold">P.</span>
-                <span dir="ltr">{t("footer.phone")}</span>
+                <span dir="ltr">{contact?.phoneValue}</span>
               </li>
               <li className="text-white/70 text-sm flex items-center gap-3">
                 <span className="text-primary font-bold">E.</span>
-                <span dir="ltr">{t("footer.email")}</span>
+                <span dir="ltr">{contact?.emailValue}</span>
               </li>
             </ul>
           </div>

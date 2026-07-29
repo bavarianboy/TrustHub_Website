@@ -14,6 +14,9 @@ import {
   AdminGetLegalContentResponse,
   AdminUpdateLegalContentBody,
   AdminUpdateLegalContentResponse,
+  AdminGetContactContentResponse,
+  AdminUpdateContactContentBody,
+  AdminUpdateContactContentResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../../middlewares/require-auth";
 import { validateBody } from "../../middlewares/validate";
@@ -24,7 +27,7 @@ const router: IRouter = Router();
 
 router.use(requireAuth);
 
-type Page = "about" | "services" | "workspace" | "privacy" | "terms";
+type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact";
 
 async function loadBothLocales(page: Page): Promise<{ en: unknown; ar: unknown }> {
   const rows = await db.select().from(pageContentTable).where(eq(pageContentTable.page, page));
@@ -79,6 +82,15 @@ router.get("/page-content/workspace", async (_req, res) => {
 router.put("/page-content/workspace", validateBody(AdminUpdateWorkspaceContentBody), async (req, res) => {
   const body = req.body as { en: unknown; ar: unknown };
   res.json(AdminUpdateWorkspaceContentResponse.parse(await saveBothLocales("workspace", body)));
+});
+
+router.get("/page-content/contact", async (_req, res) => {
+  res.json(AdminGetContactContentResponse.parse(await loadBothLocales("contact")));
+});
+
+router.put("/page-content/contact", validateBody(AdminUpdateContactContentBody), async (req, res) => {
+  const body = req.body as { en: unknown; ar: unknown };
+  res.json(AdminUpdateContactContentResponse.parse(await saveBothLocales("contact", body)));
 });
 
 function parseLegalPage(req: Request): "privacy" | "terms" {

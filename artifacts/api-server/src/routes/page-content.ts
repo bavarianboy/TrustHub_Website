@@ -8,6 +8,8 @@ import {
   GetServicesContentResponse,
   GetWorkspaceContentQueryParams,
   GetWorkspaceContentResponse,
+  GetContactContentQueryParams,
+  GetContactContentResponse,
   GetLegalContentQueryParams,
   GetLegalContentResponse,
 } from "@workspace/api-zod";
@@ -16,7 +18,7 @@ import { requireParam } from "../lib/params";
 
 const router: IRouter = Router();
 
-type Page = "about" | "services" | "workspace" | "privacy" | "terms";
+type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact";
 type Locale = "en" | "ar";
 
 async function loadContent(page: Page, locale: Locale): Promise<unknown> {
@@ -49,6 +51,12 @@ router.get("/page-content/workspace", async (req, res) => {
   const parsed = GetWorkspaceContentQueryParams.safeParse(req.query);
   if (!parsed.success) throw new HttpError(400, "locale query parameter must be 'en' or 'ar'");
   res.json(GetWorkspaceContentResponse.parse(await loadContent("workspace", parsed.data.locale)));
+});
+
+router.get("/page-content/contact", async (req, res) => {
+  const parsed = GetContactContentQueryParams.safeParse(req.query);
+  if (!parsed.success) throw new HttpError(400, "locale query parameter must be 'en' or 'ar'");
+  res.json(GetContactContentResponse.parse(await loadContent("contact", parsed.data.locale)));
 });
 
 router.get("/page-content/legal/:page", async (req, res) => {

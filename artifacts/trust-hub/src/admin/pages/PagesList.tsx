@@ -7,6 +7,7 @@ const PAGES = [
   { slug: "about", path: "/pages/about", name: "About", description: "Our story, legacy, and values" },
   { slug: "services", path: "/pages/services", name: "Services", description: "The 6 service categories and their details" },
   { slug: "workspace", path: "/pages/workspace", name: "Workspace", description: "Workspace types, amenities, location, and FAQ" },
+  { slug: "contact", path: "/pages/contact", name: "Contact", description: "Contact info, business hours, form, and social links" },
   { slug: "privacy", path: "/pages/legal/privacy", name: "Privacy Policy", description: "Privacy policy text" },
   { slug: "terms", path: "/pages/legal/terms", name: "Terms of Service", description: "Terms of service text" },
 ];

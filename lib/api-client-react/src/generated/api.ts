@@ -23,6 +23,7 @@ import type {
   AboutContent,
   AdminAboutContent,
   AdminArticle,
+  AdminContactContent,
   AdminLegalContent,
   AdminListLeadsParams,
   AdminServicesContent,
@@ -31,10 +32,12 @@ import type {
   AdminWorkspaceContent,
   ArticleDetail,
   ArticleSummary,
+  ContactContent,
   CreateLeadRequest,
   ErrorResponse,
   GetAboutContentParams,
   GetArticleBySlugParams,
+  GetContactContentParams,
   GetLegalContentParams,
   GetServicesContentParams,
   GetWorkspaceContentParams,
@@ -1309,6 +1312,90 @@ export function useGetWorkspaceContent<TData = Awaited<ReturnType<typeof getWork
 
 
 
+export const getGetContactContentUrl = (params: GetContactContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/contact?${stringifiedParams}` : `/api/page-content/contact`
+}
+
+/**
+ * @summary Get Contact page content
+ */
+export const getContactContent = async (params: GetContactContentParams, options?: RequestInit): Promise<ContactContent> => {
+
+  return customFetch<ContactContent>(getGetContactContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetContactContentQueryKey = (params?: GetContactContentParams,) => {
+    return [
+    `/api/page-content/contact`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetContactContentQueryOptions = <TData = Awaited<ReturnType<typeof getContactContent>>, TError = ErrorType<unknown>>(params: GetContactContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContactContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetContactContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getContactContent>>> = ({ signal }) => getContactContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContactContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetContactContentQueryResult = NonNullable<Awaited<ReturnType<typeof getContactContent>>>
+export type GetContactContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Contact page content
+ */
+
+export function useGetContactContent<TData = Awaited<ReturnType<typeof getContactContent>>, TError = ErrorType<unknown>>(
+ params: GetContactContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getContactContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetContactContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getGetLegalContentUrl = (page: LegalPage,
     params: GetLegalContentParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -1544,6 +1631,153 @@ export const useAdminUpdateLegalContent = <TError = ErrorType<ErrorResponse>,
         TContext
       > => {
       return useMutation(getAdminUpdateLegalContentMutationOptions(options));
+    }
+
+export const getAdminGetContactContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/contact`
+}
+
+/**
+ * @summary Get Contact content in both locales (requires admin session)
+ */
+export const adminGetContactContent = async ( options?: RequestInit): Promise<AdminContactContent> => {
+
+  return customFetch<AdminContactContent>(getAdminGetContactContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetContactContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/contact`
+    ] as const;
+    }
+
+
+export const getAdminGetContactContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetContactContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetContactContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetContactContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetContactContent>>> = ({ signal }) => adminGetContactContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetContactContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetContactContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetContactContent>>>
+export type AdminGetContactContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Contact content in both locales (requires admin session)
+ */
+
+export function useAdminGetContactContent<TData = Awaited<ReturnType<typeof adminGetContactContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetContactContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetContactContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateContactContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/contact`
+}
+
+/**
+ * @summary Update Contact content in both locales (requires admin session)
+ */
+export const adminUpdateContactContent = async (adminContactContent: AdminContactContent, options?: RequestInit): Promise<AdminContactContent> => {
+
+  return customFetch<AdminContactContent>(getAdminUpdateContactContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminContactContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateContactContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateContactContent>>, TError,{data: BodyType<AdminContactContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateContactContent>>, TError,{data: BodyType<AdminContactContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateContactContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateContactContent>>, {data: BodyType<AdminContactContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateContactContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateContactContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateContactContent>>>
+    export type AdminUpdateContactContentMutationBody = BodyType<AdminContactContent>
+    export type AdminUpdateContactContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Contact content in both locales (requires admin session)
+ */
+export const useAdminUpdateContactContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateContactContent>>, TError,{data: BodyType<AdminContactContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateContactContent>>,
+        TError,
+        {data: BodyType<AdminContactContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateContactContentMutationOptions(options));
     }
 
 export const getAdminGetAboutContentUrl = () => {

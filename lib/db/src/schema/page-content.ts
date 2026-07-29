@@ -12,6 +12,7 @@ export const pageContentPageEnum = pgEnum("page_content_page", [
   "workspace",
   "privacy",
   "terms",
+  "contact",
 ]);
 
 export const pageContentTable = pgTable(

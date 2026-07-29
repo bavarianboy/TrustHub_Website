@@ -23,25 +23,32 @@ can't infer from the code.
   fonts are self-hosted via `@fontsource` (Plus Jakarta Sans / Playfair
   Display for EN, IBM Plex Sans Arabic for AR — swapped via `[dir="rtl"]` in
   `index.css`).
-- **About/Services/Workspace content is DB-backed and admin-editable**, not
-  static JSON — the one exception to the paragraph above. `page_content`
+- **About/Services/Workspace/Contact content is DB-backed and admin-editable**,
+  not static JSON — the one exception to the paragraph above. `page_content`
   (`lib/db/src/schema/page-content.ts`) stores one JSONB blob per
   (page, locale), typed per page by a dedicated Zod schema
-  (`AboutContent`/`ServicesContent`/`WorkspaceContent` in the OpenAPI spec)
-  rather than a generic CMS shape. Public pages fetch
-  `useGet{About,Services,Workspace}Content({ locale })`; the admin editors
-  at `/admin/pages/*` fetch both locales at once and save both in a single
-  PUT. It was migrated *out* of the locale JSON files in this pass — see
-  `scripts/src/seed-page-content.ts`, a one-time migration script, not a
-  repeatable seed (re-running it overwrites any admin edits with the
-  original static copy).
+  (`AboutContent`/`ServicesContent`/`WorkspaceContent`/`ContactContent` in the
+  OpenAPI spec) rather than a generic CMS shape. Public pages fetch
+  `useGet{About,Services,Workspace,Contact}Content({ locale })`; the admin
+  editors at `/admin/pages/*` fetch both locales at once and save both in a
+  single PUT. It was migrated *out* of the locale JSON files in this pass —
+  see `scripts/src/seed-page-content.ts` and `seed-contact-content.ts`,
+  one-time migration scripts, not repeatable seeds (re-running them overwrites
+  any admin edits with the original static copy).
+  `ContactContent.socialLinks` (`{name, label, href}[]`) is locale-independent
+  data forced into a locale-keyed table: the admin `ContactEditor` renders one
+  Social Links section (not inside the EN/AR tabs) and mirrors the same array
+  into both `en.socialLinks` and `ar.socialLinks` on save. Both `Footer.tsx`
+  and `Contact.tsx` fetch `useGetContactContent({ locale })` independently for
+  address/phone/hours/socialLinks — there is no longer a static copy in
+  `i18n/locales/*.json` to drift out of sync.
 - **The admin panel is real**, at `/admin` (`src/admin/`), English-only,
   lazy-loaded so its ~61KB chunk never ships to marketing-site visitors.
   Login, a leads inbox (status filter, CSV export, inline status change), an
   article editor with EN/AR tabs writing both `article_translations` rows in
-  one save, and page-content editors for About/Services/Workspace/Privacy/
-  Terms (same EN/AR-tabs pattern). `robots.txt` disallows `/admin` and the
-  panel additionally sets `<meta name="robots" content="noindex, nofollow">`
+  one save, and page-content editors for About/Services/Workspace/Contact/
+  Privacy/Terms (same EN/AR-tabs pattern). `robots.txt` disallows `/admin` and
+  the panel additionally sets `<meta name="robots" content="noindex, nofollow">`
   while mounted.
 - **The API is real**: `leads`, `auth` (login/logout/me), public `articles`
   and `page-content`, and `admin/leads` + `admin/articles` +
@@ -50,15 +57,20 @@ can't infer from the code.
   `artifacts/api-server/src/routes/`).
 - **Contact details are real, not placeholders**: address, phone
   (`+966 54 911 0014`), and email (`advisor@trusthub.com.sa`) are the same
-  across the footer, Contact page, and Workspace page (previously three
-  inconsistent fake numbers). Privacy Policy and Terms of Service pages exist
-  at `/privacy` and `/terms` (draft boilerplate — **not reviewed by counsel**,
-  flagged as such in `scripts/src/seed-legal-content.ts`'s header comment;
-  get real legal review before launch). The Workspace map is a real Google
-  Maps `output=embed` iframe (no API key) pointed at the given address, not a
-  placeholder box. **Social media links are still `href="#"`** — no accounts
-  were provided; don't invent URLs, wire them in in when the user has real
-  ones.
+  across the footer, Contact page, and Workspace page, all sourced from the
+  same `ContactContent` row rather than being copy-pasted in three places.
+  Privacy Policy and Terms of Service pages exist at `/privacy` and `/terms`
+  (draft boilerplate — **not reviewed by counsel**, flagged as such in
+  `scripts/src/seed-legal-content.ts`'s header comment; get real legal review
+  before launch). The Workspace map (`Workspace.tsx`) is a real Google Maps
+  `output=embed` iframe pinned at verified coordinates
+  (`24.6714177,46.7220544`, resolved from the business's Google Maps listing
+  link) rather than a text-search query against the address string, which
+  didn't reliably resolve to the right pin. **Social media links are real**:
+  Facebook, LinkedIn, YouTube, TikTok, Instagram — editable from the admin
+  Contact page, rendered in the footer via a `name` → icon lookup
+  (`SOCIAL_ICONS` in `Footer.tsx`); an unrecognized `name` falls back to a
+  generic share icon rather than breaking.
 - **Article `category` is not localized** — it's a single plain column on
   `articlesTable`, not per-locale like title/excerpt/body. An Arabic visitor
   currently sees whatever string the admin typed into Category, in whichever

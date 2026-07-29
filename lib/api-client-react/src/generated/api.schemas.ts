@@ -245,6 +245,59 @@ export interface AdminWorkspaceContent {
   ar: WorkspaceContent;
 }
 
+export type ContactContentFields = {
+  name: string;
+  namePlaceholder: string;
+  company: string;
+  companyPlaceholder: string;
+  email: string;
+  emailPlaceholder: string;
+  phone: string;
+  phonePlaceholder: string;
+  service: string;
+  servicePlaceholder: string;
+  message: string;
+  messagePlaceholder: string;
+};
+
+export type ContactContentSocialLinksItem = {
+  name: string;
+  label: string;
+  href: string;
+};
+
+export interface ContactContent {
+  title: string;
+  subtitle: string;
+  infoHeading: string;
+  headOfficeLabel: string;
+  addressLine1: string;
+  addressLine2: string;
+  phoneLabel: string;
+  phoneValue: string;
+  emailLabel: string;
+  emailValue: string;
+  businessHoursLabel: string;
+  businessHoursValue: string;
+  supportHeading: string;
+  supportParagraph: string;
+  formHeading: string;
+  fields: ContactContentFields;
+  serviceOptions: string[];
+  submitButton: string;
+  submitting: string;
+  toastSuccessTitle: string;
+  toastSuccessDescription: string;
+  toastErrorTitle: string;
+  toastErrorDescription: string;
+  socialLinks: ContactContentSocialLinksItem[];
+}
+
+export interface AdminContactContent {
+  en: ContactContent;
+  ar: ContactContent;
+}
+
 export type LegalPage = typeof LegalPage[keyof typeof LegalPage];
 
 
@@ -290,6 +343,10 @@ locale: Locale;
 };
 
 export type GetWorkspaceContentParams = {
+locale: Locale;
+};
+
+export type GetContactContentParams = {
 locale: Locale;
 };
 

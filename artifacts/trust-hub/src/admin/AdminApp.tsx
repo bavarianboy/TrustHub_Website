@@ -10,6 +10,7 @@ import { PagesList } from "./pages/PagesList";
 import { AboutEditor } from "./pages/page-content/AboutEditor";
 import { ServicesEditor } from "./pages/page-content/ServicesEditor";
 import { WorkspaceEditor } from "./pages/page-content/WorkspaceEditor";
+import { ContactEditor } from "./pages/page-content/ContactEditor";
 import { LegalEditor } from "./pages/page-content/LegalEditor";
 
 function AdminGate() {
@@ -44,6 +45,7 @@ function AdminGate() {
         <Route path="/pages/about" component={AboutEditor} />
         <Route path="/pages/services" component={ServicesEditor} />
         <Route path="/pages/workspace" component={WorkspaceEditor} />
+        <Route path="/pages/contact" component={ContactEditor} />
         <Route path="/pages/legal/:page" component={LegalEditor} />
         <Route>
           <p className="text-muted-foreground">Page not found.</p>
