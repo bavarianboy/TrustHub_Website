@@ -41,7 +41,13 @@ export function Navbar() {
   const useDarkText = isScrolled || !isHomePage;
 
   return (
+    // Forced ltr: the header keeps the same layout — logo on the left, nav
+    // links in the same left-to-right order, CTA on the right — in both
+    // languages, rather than mirroring under RTL like the rest of the page.
+    // Arabic labels still render correctly right-to-left within themselves;
+    // only the overall item order/positions stay fixed.
     <nav
+      dir="ltr"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         useDarkText
           ? "bg-background/95 backdrop-blur-md shadow-md py-3"
