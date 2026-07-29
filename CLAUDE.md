@@ -22,14 +22,10 @@ can't infer from the code.
   decisions), RTL layout uses Tailwind logical properties throughout, and
   fonts are self-hosted via `@fontsource` (Plus Jakarta Sans / Playfair
   Display for EN, IBM Plex Sans Arabic for AR — swapped via `[dir="rtl"]` in
-  `index.css`). **One deliberate exception**: `Navbar.tsx`'s `<nav>` is
-  hardcoded `dir="ltr"`, so the header keeps the same layout — logo left,
-  nav links left-to-right in the same order, CTA right — in both languages
-  instead of mirroring like the rest of the page; only the Arabic labels
-  themselves still render right-to-left. Requested explicitly after the
-  default full-mirror RTL nav (logo right, links flowing right-to-left) read
-  as wrong to an Arabic-speaking reviewer. Don't "fix" this nav back to
-  inheriting page direction without checking first.
+  `index.css`). `Navbar.tsx` inherits page direction like everything else —
+  a forced-`dir="ltr"` variant was tried and explicitly reverted; the header
+  should mirror under RTL (logo right, links flowing right-to-left) same as
+  the rest of the page. Don't reintroduce a hardcoded `dir` on the nav.
 - **About/Services/Workspace/Contact content is DB-backed and admin-editable**,
   not static JSON — the one exception to the paragraph above. `page_content`
   (`lib/db/src/schema/page-content.ts`) stores one JSONB blob per
