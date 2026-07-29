@@ -1,3 +1,4 @@
+import path from "node:path";
 import express, { type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -7,6 +8,7 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 import { env } from "./lib/env";
 import { uploadsDir } from "./lib/uploads";
+import { frontendDistDir } from "./lib/frontend";
 import { errorHandler } from "./middlewares/error-handler";
 
 const app: Express = express();
@@ -30,7 +32,12 @@ app.use(
     },
   }),
 );
-app.use(helmet());
+// CSP is left off rather than tuned: this server now also serves the built
+// SPA's index.html (below), and Vite/Radix output relies on inline <script>
+// bootstrapping and inline style attributes that a default CSP blocks.
+// Getting a real policy right needs nonces/hashes wired through the Vite
+// build — not done here.
+app.use(helmet({ contentSecurityPolicy: false }));
 // In production the API serves the built SPA itself (same-origin), so no CORS
 // grant is needed — same-origin requests bypass CORS entirely, and `origin:
 // false` refuses to add an Access-Control-Allow-Origin header for anything
@@ -46,6 +53,19 @@ app.use(express.urlencoded({ extended: true }));
 // them — only the POST that creates them (in router, below) is auth-gated.
 app.use("/api/uploads", express.static(uploadsDir));
 app.use("/api", router);
+
+// In production, this process is the only deployable — it also serves the
+// built frontend (artifacts/trust-hub/dist/public), same-origin, no separate
+// static host needed. In dev the two run as separate processes (Vite on its
+// own port, proxying /api here), so this block is skipped entirely.
+if (env.isProduction) {
+  app.use(express.static(frontendDistDir));
+  // Everything that isn't /api and isn't a real static file is an SPA route
+  // (wouter handles it client-side) — fall back to index.html for all of it.
+  app.get(/^(?!\/api\/).*/, (_req, res) => {
+    res.sendFile(path.join(frontendDistDir, "index.html"));
+  });
+}
 
 app.use(errorHandler);
 

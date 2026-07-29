@@ -137,7 +137,19 @@ can't infer from the code.
   individual locale rows — simpler, and the editor always submits the full set.
 - **In production, Express serves the built SPA** — one process, one deployable,
   no CORS, and session cookies are same-origin. The Vite dev proxy mirrors this
-  so dev and prod behave alike.
+  so dev and prod behave alike. Implemented in
+  [app.ts](artifacts/api-server/src/app.ts): gated on `env.isProduction`
+  (`NODE_ENV=production`), `express.static(frontendDistDir)` plus a
+  `(?!\/api\/)` catch-all serving `index.html`, so wouter's client routes
+  (including `/ar/...`) survive a hard refresh. `frontendDistDir` resolves to
+  the sibling `artifacts/trust-hub/dist/public` (override with
+  `FRONTEND_DIST_DIR`) the same way `uploadsDir` resolves relative to the
+  bundled `dist/index.mjs` — see `lib/frontend.ts` / `lib/uploads.ts`. Helmet
+  runs with `contentSecurityPolicy: false`: the default CSP blocks the
+  inline-style attributes Radix/Vite output relies on, and a real policy
+  needs nonces wired through the Vite build, not done here. See
+  `DEPLOYMENT.md` for the full VPS deploy walkthrough (systemd + nginx +
+  Let's Encrypt).
 
 ## Replit migration
 

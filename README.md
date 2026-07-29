@@ -139,3 +139,10 @@ Never hand-edit anything under `src/generated/` — it is overwritten on every r
 
 This project was generated on Replit and has since been migrated off-platform.
 See `CLAUDE.md` for what that migration changed and why.
+
+## Deploying
+
+See `DEPLOYMENT.md` for a full walkthrough of deploying to a VPS: system
+setup, environment variables, running the API server (which also serves the
+built frontend in production) under systemd, nginx as a reverse proxy, and
+TLS via Let's Encrypt.
