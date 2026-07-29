@@ -4,6 +4,10 @@ This guide takes a fresh Ubuntu VPS to a running production instance of Trust
 Hub: one Node process serving both the API and the built frontend, behind
 nginx doing TLS termination.
 
+Repo: [github.com/bavarianboy/TrustHub_Website](https://github.com/bavarianboy/TrustHub_Website)
+(private — see [Get the code onto the server](#3-get-the-code-onto-the-server)
+for the deploy-key setup a VPS needs to clone it).
+
 ## Architecture
 
 In production (`NODE_ENV=production`), `artifacts/api-server` serves the
@@ -87,18 +91,33 @@ sudo ufw status
 
 ## 3. Get the code onto the server
 
-Pick a deploy path — this guide uses `/opt/trust-hub`:
+The repo is [github.com/bavarianboy/TrustHub_Website](https://github.com/bavarianboy/TrustHub_Website)
+and is **private**, so cloning from the VPS needs its own credential — don't
+reuse a personal token in the clone URL. Set up a deploy key instead:
 
 ```sh
-sudo mkdir -p /opt/trust-hub
-sudo chown "$USER":"$USER" /opt/trust-hub
-git clone <your-repo-url> /opt/trust-hub
-cd /opt/trust-hub
+ssh-keygen -t ed25519 -f ~/.ssh/trust_hub_deploy -C "trust-hub-vps-deploy" -N ""
+cat ~/.ssh/trust_hub_deploy.pub
 ```
 
-If the repo is private, set up a deploy key (`ssh-keygen -t ed25519 -f
-~/.ssh/trust_hub_deploy`, add the public half as a GitHub deploy key) rather
-than embedding a personal access token in the clone URL.
+Add that public key at
+[github.com/bavarianboy/TrustHub_Website/settings/keys](https://github.com/bavarianboy/TrustHub_Website/settings/keys)
+→ **Add deploy key** (read-only is enough — the VPS only ever pulls).
+
+```sh
+cat >> ~/.ssh/config <<'EOF'
+Host github-trust-hub
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/trust_hub_deploy
+  IdentitiesOnly yes
+EOF
+
+sudo mkdir -p /opt/trust-hub
+sudo chown "$USER":"$USER" /opt/trust-hub
+git clone github-trust-hub:bavarianboy/TrustHub_Website.git /opt/trust-hub
+cd /opt/trust-hub
+```
 
 ## 4. Configure environment variables
 
