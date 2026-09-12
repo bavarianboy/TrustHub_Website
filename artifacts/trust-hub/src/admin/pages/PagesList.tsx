@@ -6,6 +6,9 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 const PAGES = [
   { slug: "about", path: "/pages/about", name: "About", description: "Our story, legacy, and values" },
   { slug: "services", path: "/pages/services", name: "Services", description: "The 6 service categories and their details" },
+  { slug: "programs", path: "/pages/programs", name: "Programs Overview", description: "Program cards and introductory content" },
+  { slug: "incubator-program", path: "/pages/programs/incubator-program", name: "Incubator Program", description: "Objectives, audience, benefits, terms, and application guidance" },
+  { slug: "accelerator-program", path: "/pages/programs/accelerator-program", name: "Accelerator Program", description: "Growth pillars, audience, and ecosystem goals" },
   { slug: "workspace", path: "/pages/workspace", name: "Workspace", description: "Workspace types, amenities, location, and FAQ" },
   { slug: "contact", path: "/pages/contact", name: "Contact", description: "Contact info, business hours, form, and social links" },
   { slug: "privacy", path: "/pages/legal/privacy", name: "Privacy Policy", description: "Privacy policy text" },

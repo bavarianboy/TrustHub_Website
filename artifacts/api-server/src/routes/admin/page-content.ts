@@ -17,6 +17,10 @@ import {
   AdminGetContactContentResponse,
   AdminUpdateContactContentBody,
   AdminUpdateContactContentResponse,
+  AdminGetProgramPageContentResponse,
+  AdminUpdateProgramPageContentBody,
+  AdminUpdateProgramPageContentResponse,
+  AdminGetProgramPageContentParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../../middlewares/require-auth";
 import { validateBody } from "../../middlewares/validate";
@@ -27,7 +31,7 @@ const router: IRouter = Router();
 
 router.use(requireAuth);
 
-type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact";
+type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact" | "programs" | "incubator-program" | "accelerator-program";
 
 async function loadBothLocales(page: Page): Promise<{ en: unknown; ar: unknown }> {
   const rows = await db.select().from(pageContentTable).where(eq(pageContentTable.page, page));
@@ -59,6 +63,19 @@ async function saveBothLocales(page: Page, body: { en: unknown; ar: unknown }): 
 
 router.get("/page-content/about", async (_req, res) => {
   res.json(AdminGetAboutContentResponse.parse(await loadBothLocales("about")));
+});
+
+router.get("/page-content/programs/:page", async (req, res) => {
+  const parsed = AdminGetProgramPageContentParams.safeParse({ page: requireParam(req, "page") });
+  if (!parsed.success) throw new HttpError(404, "Unknown program page");
+  res.json(AdminGetProgramPageContentResponse.parse(await loadBothLocales(parsed.data.page)));
+});
+
+router.put("/page-content/programs/:page", validateBody(AdminUpdateProgramPageContentBody), async (req, res) => {
+  const parsed = AdminGetProgramPageContentParams.safeParse({ page: requireParam(req, "page") });
+  if (!parsed.success) throw new HttpError(404, "Unknown program page");
+  const body = req.body as { en: unknown; ar: unknown };
+  res.json(AdminUpdateProgramPageContentResponse.parse(await saveBothLocales(parsed.data.page, body)));
 });
 
 router.put("/page-content/about", validateBody(AdminUpdateAboutContentBody), async (req, res) => {

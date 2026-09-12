@@ -2,12 +2,13 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building2, Briefcase, FileText, Calculator, Users, CheckCircle2 } from "lucide-react";
+import { Building2, Briefcase, FileText, Calculator, Users, CheckCircle2, Rocket, ArrowUpRight } from "lucide-react";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useGetServicesContent } from "@workspace/api-client-react";
 import type { Locale } from "@/i18n";
 
 const serviceIcons: Record<string, typeof Building2> = {
+  programs: Rocket,
   "business-setup": Building2,
   "pro-services": FileText,
   "hr-payroll": Users,
@@ -96,6 +97,7 @@ export function Services() {
                         ))}
                       </ul>
                     </div>
+                    {service.id === "programs" && <Button asChild className="mt-6"><Link href="/programs" data-testid="link-service-programs">{locale === "ar" ? "استكشف برامجنا" : "Explore Our Programs"}<ArrowUpRight className="ms-2 h-4 w-4" /></Link></Button>}
                   </div>
 
                   <div className="lg:w-1/2 w-full">
@@ -105,6 +107,7 @@ export function Services() {
                           src={service.image}
                           alt={service.title}
                           className="w-full h-full object-cover"
+                          loading={index === 0 ? "eager" : "lazy"}
                           data-testid={`img-service-${service.id}`}
                         />
                       </div>

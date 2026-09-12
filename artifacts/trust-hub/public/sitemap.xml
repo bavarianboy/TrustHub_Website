@@ -37,6 +37,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/news"/>
   </url>
   <url>
+    <loc>https://www.trusthub.com.sa/programs</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/programs"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/programs"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/programs"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/programs/incubator-program</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/programs/incubator-program"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/programs/incubator-program"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/programs/incubator-program"/>
+  </url>
+  <url>
+    <loc>https://www.trusthub.com.sa/programs/accelerator-program</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/programs/accelerator-program"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/programs/accelerator-program"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.trusthub.com.sa/programs/accelerator-program"/>
+  </url>
+  <url>
     <loc>https://www.trusthub.com.sa/workspace</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.trusthub.com.sa/workspace"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://www.trusthub.com.sa/ar/workspace"/>

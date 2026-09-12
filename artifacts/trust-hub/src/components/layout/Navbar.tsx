@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X, Languages } from "lucide-react";
+import { Menu, X, Languages, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ export function Navbar() {
   const locale = i18n.language;
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileProgramsOpen, setMobileProgramsOpen] = useState(false);
 
   const isHomePage = location === "/";
 
@@ -26,6 +27,7 @@ export function Navbar() {
     { name: t("nav.home"), path: "/" },
     { name: t("nav.about"), path: "/about" },
     { name: t("nav.services"), path: "/services" },
+    { name: t("nav.programs"), path: "/programs" },
     { name: t("nav.news"), path: "/news" },
     { name: t("nav.workspace"), path: "/workspace" },
     { name: t("nav.contact"), path: "/contact" },
@@ -60,7 +62,7 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-6">
           <ul className="flex items-center gap-6">
             {navLinks.map((link) => (
-              <li key={link.path}>
+              <li key={link.path} className={link.path === "/programs" ? "relative group" : ""}>
                 <Link
                   href={link.path}
                   className={`text-sm font-medium transition-colors hover:text-primary ${
@@ -72,8 +74,9 @@ export function Navbar() {
                   }`}
                   data-testid={`link-nav-${link.path === "/" ? "home" : link.path.slice(1)}`}
                 >
-                  {link.name}
+                  {link.name}{link.path === "/programs" && <ChevronDown size={14} className="inline ms-1" />}
                 </Link>
+                {link.path === "/programs" && <div className="absolute top-full start-0 pt-3 min-w-56 invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity"><div className="bg-background border border-border shadow-lg rounded-sm py-2">{[["incubator-program", t("nav.incubator")], ["accelerator-program", t("nav.accelerator")]].map(([slug, label]) => <Link key={slug} href={`/programs/${slug}`} className="block px-4 py-3 text-sm text-foreground hover:bg-secondary hover:text-primary">{label}</Link>)}</div></div>}
               </li>
             ))}
           </ul>
@@ -111,13 +114,13 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         <div
-          className={`fixed inset-0 bg-background/98 backdrop-blur-xl z-40 flex flex-col items-center justify-center transition-all duration-300 ${
+          className={`fixed inset-0 bg-background/98 backdrop-blur-xl z-40 flex flex-col items-center justify-start overflow-y-auto py-28 transition-all duration-300 ${
             mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
           }`}
         >
           <ul className="flex flex-col items-center gap-8 text-xl">
             {navLinks.map((link) => (
-              <li key={link.path}>
+              <li key={link.path} className="text-center">
                 <Link
                   href={link.path}
                   className={`font-medium transition-colors hover:text-primary ${
@@ -128,6 +131,7 @@ export function Navbar() {
                 >
                   {link.name}
                 </Link>
+                {link.path === "/programs" && <><button type="button" onClick={() => setMobileProgramsOpen(open => !open)} aria-expanded={mobileProgramsOpen} aria-label={t("nav.programs")} className="ms-2 text-foreground align-middle"><ChevronDown size={18} className={mobileProgramsOpen ? "rotate-180" : ""} /></button>{mobileProgramsOpen && <div className="flex flex-col items-center gap-3 mt-4 text-base">{[["incubator-program", t("nav.incubator")], ["accelerator-program", t("nav.accelerator")]].map(([slug, label]) => <Link key={slug} href={`/programs/${slug}`} onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground hover:text-primary">{label}</Link>)}</div>}</>}
               </li>
             ))}
           </ul>

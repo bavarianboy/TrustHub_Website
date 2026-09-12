@@ -12,6 +12,7 @@ import { ServicesEditor } from "./pages/page-content/ServicesEditor";
 import { WorkspaceEditor } from "./pages/page-content/WorkspaceEditor";
 import { ContactEditor } from "./pages/page-content/ContactEditor";
 import { LegalEditor } from "./pages/page-content/LegalEditor";
+import { ProgramEditor } from "./pages/page-content/ProgramEditor";
 
 function AdminGate() {
   // A normal, expected state for a fresh visitor is "not logged in" — don't
@@ -44,6 +45,9 @@ function AdminGate() {
         <Route path="/pages" component={PagesList} />
         <Route path="/pages/about" component={AboutEditor} />
         <Route path="/pages/services" component={ServicesEditor} />
+        <Route path="/pages/programs"><ProgramEditor page="programs" /></Route>
+        <Route path="/pages/programs/incubator-program"><ProgramEditor page="incubator-program" /></Route>
+        <Route path="/pages/programs/accelerator-program"><ProgramEditor page="accelerator-program" /></Route>
         <Route path="/pages/workspace" component={WorkspaceEditor} />
         <Route path="/pages/contact" component={ContactEditor} />
         <Route path="/pages/legal/:page" component={LegalEditor} />

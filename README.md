@@ -68,6 +68,7 @@ pnpm run typecheck    # tsc across every package — the only automated safety n
 pnpm run build        # typecheck + build all packages
 pnpm run db:push      # push Drizzle schema changes to Postgres (dev only)
 pnpm run codegen      # regenerate API hooks + Zod schemas from the OpenAPI spec
+pnpm --filter @workspace/scripts run seed-programs-content # insert missing EN/AR Programs rows only
 ```
 
 ## Layout
@@ -115,6 +116,12 @@ Never hand-edit anything under `src/generated/` — it is overwritten on every r
 | `GET /api/admin/leads`, `PATCH /api/admin/leads/:id` | session | Lead inbox and status updates |
 
 ## Site structure
+
+The Programs overview and Incubator/Accelerator detail pages use three additional
+`page_content` keys. Run `seed-programs-content` against the intended database
+before opening those pages. It adds only the three required enum values and
+inserts missing English/Arabic rows; rerunning it does not overwrite admin edits.
+It does not run `db:push` or apply unrelated schema changes.
 
 - **Marketing site**: `/`, `/about`, `/services`, `/news`, `/news/:slug`,
   `/workspace`, `/contact`, `/privacy`, `/terms` — each also served under an

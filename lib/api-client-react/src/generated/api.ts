@@ -23,9 +23,12 @@ import type {
   AboutContent,
   AdminAboutContent,
   AdminArticle,
+  AdminBusinessIncubatorsContent,
+  AdminCompanyFormationContent,
   AdminContactContent,
   AdminLegalContent,
   AdminListLeadsParams,
+  AdminProgramPageContent,
   AdminServicesContent,
   AdminUpdateLeadStatusBody,
   AdminUploadImageBody,
@@ -33,13 +36,18 @@ import type {
   AdminWorkspaceContent,
   ArticleDetail,
   ArticleSummary,
+  BusinessIncubatorsContent,
+  CompanyFormationContent,
   ContactContent,
   CreateLeadRequest,
   ErrorResponse,
   GetAboutContentParams,
   GetArticleBySlugParams,
+  GetBusinessIncubatorsContentParams,
+  GetCompanyFormationContentParams,
   GetContactContentParams,
   GetLegalContentParams,
+  GetProgramPageContentParams,
   GetServicesContentParams,
   GetWorkspaceContentParams,
   HealthStatus,
@@ -48,6 +56,8 @@ import type {
   LegalPage,
   ListArticlesParams,
   LoginRequest,
+  ProgramPage,
+  ProgramPageContent,
   ServicesContent,
   UploadedImage,
   UpsertArticleRequest,
@@ -1314,6 +1324,263 @@ export function useGetWorkspaceContent<TData = Awaited<ReturnType<typeof getWork
 
 
 
+export const getGetProgramPageContentUrl = (page: ProgramPage,
+    params: GetProgramPageContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/programs/${page}?${stringifiedParams}` : `/api/page-content/programs/${page}`
+}
+
+/**
+ * @summary Get a Programs page in one locale
+ */
+export const getProgramPageContent = async (page: ProgramPage,
+    params: GetProgramPageContentParams, options?: RequestInit): Promise<ProgramPageContent> => {
+
+  return customFetch<ProgramPageContent>(getGetProgramPageContentUrl(page,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetProgramPageContentQueryKey = (page: ProgramPage,
+    params?: GetProgramPageContentParams,) => {
+    return [
+    `/api/page-content/programs/${page}`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetProgramPageContentQueryOptions = <TData = Awaited<ReturnType<typeof getProgramPageContent>>, TError = ErrorType<unknown>>(page: ProgramPage,
+    params: GetProgramPageContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProgramPageContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetProgramPageContentQueryKey(page,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProgramPageContent>>> = ({ signal }) => getProgramPageContent(page,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: page !== null && page !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProgramPageContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetProgramPageContentQueryResult = NonNullable<Awaited<ReturnType<typeof getProgramPageContent>>>
+export type GetProgramPageContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get a Programs page in one locale
+ */
+
+export function useGetProgramPageContent<TData = Awaited<ReturnType<typeof getProgramPageContent>>, TError = ErrorType<unknown>>(
+ page: ProgramPage,
+    params: GetProgramPageContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProgramPageContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetProgramPageContentQueryOptions(page,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetCompanyFormationContentUrl = (params: GetCompanyFormationContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/company-formation?${stringifiedParams}` : `/api/page-content/company-formation`
+}
+
+/**
+ * @summary Get Company Formation page content
+ */
+export const getCompanyFormationContent = async (params: GetCompanyFormationContentParams, options?: RequestInit): Promise<CompanyFormationContent> => {
+
+  return customFetch<CompanyFormationContent>(getGetCompanyFormationContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetCompanyFormationContentQueryKey = (params?: GetCompanyFormationContentParams,) => {
+    return [
+    `/api/page-content/company-formation`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetCompanyFormationContentQueryOptions = <TData = Awaited<ReturnType<typeof getCompanyFormationContent>>, TError = ErrorType<unknown>>(params: GetCompanyFormationContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCompanyFormationContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCompanyFormationContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCompanyFormationContent>>> = ({ signal }) => getCompanyFormationContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCompanyFormationContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetCompanyFormationContentQueryResult = NonNullable<Awaited<ReturnType<typeof getCompanyFormationContent>>>
+export type GetCompanyFormationContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Company Formation page content
+ */
+
+export function useGetCompanyFormationContent<TData = Awaited<ReturnType<typeof getCompanyFormationContent>>, TError = ErrorType<unknown>>(
+ params: GetCompanyFormationContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getCompanyFormationContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetCompanyFormationContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetBusinessIncubatorsContentUrl = (params: GetBusinessIncubatorsContentParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/page-content/business-incubators-accelerators?${stringifiedParams}` : `/api/page-content/business-incubators-accelerators`
+}
+
+/**
+ * @summary Get Business Incubators & Accelerators page content
+ */
+export const getBusinessIncubatorsContent = async (params: GetBusinessIncubatorsContentParams, options?: RequestInit): Promise<BusinessIncubatorsContent> => {
+
+  return customFetch<BusinessIncubatorsContent>(getGetBusinessIncubatorsContentUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetBusinessIncubatorsContentQueryKey = (params?: GetBusinessIncubatorsContentParams,) => {
+    return [
+    `/api/page-content/business-incubators-accelerators`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetBusinessIncubatorsContentQueryOptions = <TData = Awaited<ReturnType<typeof getBusinessIncubatorsContent>>, TError = ErrorType<unknown>>(params: GetBusinessIncubatorsContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBusinessIncubatorsContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBusinessIncubatorsContentQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBusinessIncubatorsContent>>> = ({ signal }) => getBusinessIncubatorsContent(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBusinessIncubatorsContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetBusinessIncubatorsContentQueryResult = NonNullable<Awaited<ReturnType<typeof getBusinessIncubatorsContent>>>
+export type GetBusinessIncubatorsContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Business Incubators & Accelerators page content
+ */
+
+export function useGetBusinessIncubatorsContent<TData = Awaited<ReturnType<typeof getBusinessIncubatorsContent>>, TError = ErrorType<unknown>>(
+ params: GetBusinessIncubatorsContentParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getBusinessIncubatorsContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetBusinessIncubatorsContentQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getGetContactContentUrl = (params: GetContactContentParams,) => {
   const normalizedParams = new URLSearchParams();
 
@@ -2293,5 +2560,447 @@ export const useAdminUpdateWorkspaceContent = <TError = ErrorType<ErrorResponse>
         TContext
       > => {
       return useMutation(getAdminUpdateWorkspaceContentMutationOptions(options));
+    }
+
+export const getAdminGetProgramPageContentUrl = (page: ProgramPage,) => {
+
+
+
+
+  return `/api/admin/page-content/programs/${page}`
+}
+
+/**
+ * @summary Get a Programs page in both locales
+ */
+export const adminGetProgramPageContent = async (page: ProgramPage, options?: RequestInit): Promise<AdminProgramPageContent> => {
+
+  return customFetch<AdminProgramPageContent>(getAdminGetProgramPageContentUrl(page),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetProgramPageContentQueryKey = (page: ProgramPage,) => {
+    return [
+    `/api/admin/page-content/programs/${page}`
+    ] as const;
+    }
+
+
+export const getAdminGetProgramPageContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetProgramPageContent>>, TError = ErrorType<unknown>>(page: ProgramPage, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetProgramPageContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetProgramPageContentQueryKey(page);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetProgramPageContent>>> = ({ signal }) => adminGetProgramPageContent(page, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: page !== null && page !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetProgramPageContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetProgramPageContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetProgramPageContent>>>
+export type AdminGetProgramPageContentQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get a Programs page in both locales
+ */
+
+export function useAdminGetProgramPageContent<TData = Awaited<ReturnType<typeof adminGetProgramPageContent>>, TError = ErrorType<unknown>>(
+ page: ProgramPage, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetProgramPageContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetProgramPageContentQueryOptions(page,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateProgramPageContentUrl = (page: ProgramPage,) => {
+
+
+
+
+  return `/api/admin/page-content/programs/${page}`
+}
+
+/**
+ * @summary Update a Programs page in both locales
+ */
+export const adminUpdateProgramPageContent = async (page: ProgramPage,
+    adminProgramPageContent: AdminProgramPageContent, options?: RequestInit): Promise<AdminProgramPageContent> => {
+
+  return customFetch<AdminProgramPageContent>(getAdminUpdateProgramPageContentUrl(page),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminProgramPageContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateProgramPageContentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateProgramPageContent>>, TError,{page: ProgramPage;data: BodyType<AdminProgramPageContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateProgramPageContent>>, TError,{page: ProgramPage;data: BodyType<AdminProgramPageContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateProgramPageContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateProgramPageContent>>, {page: ProgramPage;data: BodyType<AdminProgramPageContent>}> = (props) => {
+          const {page,data} = props ?? {};
+
+          return  adminUpdateProgramPageContent(page,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateProgramPageContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateProgramPageContent>>>
+    export type AdminUpdateProgramPageContentMutationBody = BodyType<AdminProgramPageContent>
+    export type AdminUpdateProgramPageContentMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update a Programs page in both locales
+ */
+export const useAdminUpdateProgramPageContent = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateProgramPageContent>>, TError,{page: ProgramPage;data: BodyType<AdminProgramPageContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateProgramPageContent>>,
+        TError,
+        {page: ProgramPage;data: BodyType<AdminProgramPageContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateProgramPageContentMutationOptions(options));
+    }
+
+export const getAdminGetCompanyFormationContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/company-formation`
+}
+
+/**
+ * @summary Get Company Formation content in both locales (requires admin session)
+ */
+export const adminGetCompanyFormationContent = async ( options?: RequestInit): Promise<AdminCompanyFormationContent> => {
+
+  return customFetch<AdminCompanyFormationContent>(getAdminGetCompanyFormationContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetCompanyFormationContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/company-formation`
+    ] as const;
+    }
+
+
+export const getAdminGetCompanyFormationContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetCompanyFormationContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetCompanyFormationContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetCompanyFormationContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetCompanyFormationContent>>> = ({ signal }) => adminGetCompanyFormationContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetCompanyFormationContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetCompanyFormationContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetCompanyFormationContent>>>
+export type AdminGetCompanyFormationContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Company Formation content in both locales (requires admin session)
+ */
+
+export function useAdminGetCompanyFormationContent<TData = Awaited<ReturnType<typeof adminGetCompanyFormationContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetCompanyFormationContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetCompanyFormationContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateCompanyFormationContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/company-formation`
+}
+
+/**
+ * @summary Update Company Formation content in both locales (requires admin session)
+ */
+export const adminUpdateCompanyFormationContent = async (adminCompanyFormationContent: AdminCompanyFormationContent, options?: RequestInit): Promise<AdminCompanyFormationContent> => {
+
+  return customFetch<AdminCompanyFormationContent>(getAdminUpdateCompanyFormationContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminCompanyFormationContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateCompanyFormationContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>, TError,{data: BodyType<AdminCompanyFormationContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>, TError,{data: BodyType<AdminCompanyFormationContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateCompanyFormationContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>, {data: BodyType<AdminCompanyFormationContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateCompanyFormationContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateCompanyFormationContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>>
+    export type AdminUpdateCompanyFormationContentMutationBody = BodyType<AdminCompanyFormationContent>
+    export type AdminUpdateCompanyFormationContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Company Formation content in both locales (requires admin session)
+ */
+export const useAdminUpdateCompanyFormationContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>, TError,{data: BodyType<AdminCompanyFormationContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateCompanyFormationContent>>,
+        TError,
+        {data: BodyType<AdminCompanyFormationContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateCompanyFormationContentMutationOptions(options));
+    }
+
+export const getAdminGetBusinessIncubatorsContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/business-incubators-accelerators`
+}
+
+/**
+ * @summary Get Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+export const adminGetBusinessIncubatorsContent = async ( options?: RequestInit): Promise<AdminBusinessIncubatorsContent> => {
+
+  return customFetch<AdminBusinessIncubatorsContent>(getAdminGetBusinessIncubatorsContentUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminGetBusinessIncubatorsContentQueryKey = () => {
+    return [
+    `/api/admin/page-content/business-incubators-accelerators`
+    ] as const;
+    }
+
+
+export const getAdminGetBusinessIncubatorsContentQueryOptions = <TData = Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetBusinessIncubatorsContentQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>> = ({ signal }) => adminGetBusinessIncubatorsContent({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminGetBusinessIncubatorsContentQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>>
+export type AdminGetBusinessIncubatorsContentQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Get Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+
+export function useAdminGetBusinessIncubatorsContent<TData = Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>, TError = ErrorType<ErrorResponse>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminGetBusinessIncubatorsContent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminGetBusinessIncubatorsContentQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminUpdateBusinessIncubatorsContentUrl = () => {
+
+
+
+
+  return `/api/admin/page-content/business-incubators-accelerators`
+}
+
+/**
+ * @summary Update Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+export const adminUpdateBusinessIncubatorsContent = async (adminBusinessIncubatorsContent: AdminBusinessIncubatorsContent, options?: RequestInit): Promise<AdminBusinessIncubatorsContent> => {
+
+  return customFetch<AdminBusinessIncubatorsContent>(getAdminUpdateBusinessIncubatorsContentUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminBusinessIncubatorsContent)
+  }
+);}
+
+
+
+
+export const getAdminUpdateBusinessIncubatorsContentMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>, TError,{data: BodyType<AdminBusinessIncubatorsContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>, TError,{data: BodyType<AdminBusinessIncubatorsContent>}, TContext> => {
+
+const mutationKey = ['adminUpdateBusinessIncubatorsContent'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>, {data: BodyType<AdminBusinessIncubatorsContent>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUpdateBusinessIncubatorsContent(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateBusinessIncubatorsContentMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>>
+    export type AdminUpdateBusinessIncubatorsContentMutationBody = BodyType<AdminBusinessIncubatorsContent>
+    export type AdminUpdateBusinessIncubatorsContentMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+export const useAdminUpdateBusinessIncubatorsContent = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>, TError,{data: BodyType<AdminBusinessIncubatorsContent>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateBusinessIncubatorsContent>>,
+        TError,
+        {data: BodyType<AdminBusinessIncubatorsContent>},
+        TContext
+      > => {
+      return useMutation(getAdminUpdateBusinessIncubatorsContentMutationOptions(options));
     }
 

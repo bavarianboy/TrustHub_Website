@@ -415,6 +415,68 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkspaceContent"
 
+  /page-content/programs/{page}:
+    get:
+      operationId: getProgramPageContent
+      tags: [page-content]
+      summary: Get a Programs page in one locale
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProgramPage"
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Programs page content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgramPageContent"
+
+  /page-content/company-formation:
+    get:
+      operationId: getCompanyFormationContent
+      tags: [page-content]
+      summary: Get Company Formation page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Company Formation page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyFormationContent"
+
+  /page-content/business-incubators-accelerators:
+    get:
+      operationId: getBusinessIncubatorsContent
+      tags: [page-content]
+      summary: Get Business Incubators & Accelerators page content
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Locale"
+      responses:
+        "200":
+          description: Business Incubators & Accelerators page content in the requested locale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessIncubatorsContent"
+
   /page-content/contact:
     get:
       operationId: getContactContent
@@ -709,6 +771,132 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminWorkspaceContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/page-content/programs/{page}:
+    get:
+      operationId: adminGetProgramPageContent
+      tags: [admin-page-content]
+      summary: Get a Programs page in both locales
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProgramPage"
+      responses:
+        "200":
+          description: Content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProgramPageContent"
+    put:
+      operationId: adminUpdateProgramPageContent
+      tags: [admin-page-content]
+      summary: Update a Programs page in both locales
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProgramPage"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminProgramPageContent"
+      responses:
+        "200":
+          description: Updated content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProgramPageContent"
+
+  /admin/page-content/company-formation:
+    get:
+      operationId: adminGetCompanyFormationContent
+      tags: [admin-page-content]
+      summary: Get Company Formation content in both locales (requires admin session)
+      responses:
+        "200":
+          description: Company Formation content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCompanyFormationContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateCompanyFormationContent
+      tags: [admin-page-content]
+      summary: Update Company Formation content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCompanyFormationContent"
+      responses:
+        "200":
+          description: Updated Company Formation content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCompanyFormationContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/page-content/business-incubators-accelerators:
+    get:
+      operationId: adminGetBusinessIncubatorsContent
+      tags: [admin-page-content]
+      summary: Get Business Incubators & Accelerators content in both locales (requires admin session)
+      responses:
+        "200":
+          description: Business Incubators & Accelerators content in both locales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminBusinessIncubatorsContent"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: adminUpdateBusinessIncubatorsContent
+      tags: [admin-page-content]
+      summary: Update Business Incubators & Accelerators content in both locales (requires admin session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminBusinessIncubatorsContent"
+      responses:
+        "200":
+          description: Updated Business Incubators & Accelerators content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminBusinessIncubatorsContent"
         "401":
           description: Not authenticated
           content:
@@ -1212,6 +1400,276 @@ components:
           $ref: "#/components/schemas/WorkspaceContent"
         ar:
           $ref: "#/components/schemas/WorkspaceContent"
+      required: [en, ar]
+
+    ProgramPage:
+      type: string
+      enum: [programs, incubator-program, accelerator-program]
+
+    ProgramPageContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        intro:
+          type: string
+        sections:
+          type: array
+          items:
+            type: object
+            properties:
+              heading:
+                type: string
+              description:
+                type: string
+              items:
+                type: array
+                items:
+                  type: string
+            required: [heading, description, items]
+        cards:
+          type: array
+          items:
+            type: object
+            properties:
+              slug:
+                $ref: "#/components/schemas/ProgramPage"
+              title:
+                type: string
+              description:
+                type: string
+              focusAreas:
+                type: array
+                items:
+                  type: string
+            required: [slug, title, description, focusAreas]
+      required: [title, subtitle, intro, sections, cards]
+
+    AdminProgramPageContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/ProgramPageContent"
+        ar:
+          $ref: "#/components/schemas/ProgramPageContent"
+      required: [en, ar]
+
+    CompanyFormationContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        introParagraph:
+          type: string
+        whyUsHeading:
+          type: string
+        whyUsItems:
+          type: array
+          items:
+            type: string
+        formationServicesHeading:
+          type: string
+        formationServicesItems:
+          type: array
+          items:
+            type: string
+        postFormationServicesHeading:
+          type: string
+        postFormationServicesItems:
+          type: array
+          items:
+            type: string
+        additionalServicesHeading:
+          type: string
+        additionalServicesGroups:
+          type: array
+          items:
+            type: object
+            properties:
+              heading:
+                type: string
+              items:
+                type: array
+                items:
+                  type: string
+            required: [heading, items]
+        journeyHeading:
+          type: string
+        journeyIntro:
+          type: string
+        journeySteps:
+          type: array
+          items:
+            type: object
+            properties:
+              day:
+                type: string
+              step:
+                type: string
+            required: [day, step]
+        journeyClosing:
+          type: string
+        numbersHeading:
+          type: string
+        numbersIntro:
+          type: string
+        numbersStats:
+          type: array
+          items:
+            type: string
+        successStoriesHeading:
+          type: string
+        successStoriesIntro:
+          type: string
+        successStories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              result:
+                type: string
+            required: [name, description, result]
+        successQuote:
+          type: string
+        teamHeading:
+          type: string
+        teamIntro:
+          type: string
+        teamAreas:
+          type: array
+          items:
+            type: string
+        teamClosing:
+          type: string
+      required:
+        - title
+        - subtitle
+        - introParagraph
+        - whyUsHeading
+        - whyUsItems
+        - formationServicesHeading
+        - formationServicesItems
+        - postFormationServicesHeading
+        - postFormationServicesItems
+        - additionalServicesHeading
+        - additionalServicesGroups
+        - journeyHeading
+        - journeyIntro
+        - journeySteps
+        - journeyClosing
+        - numbersHeading
+        - numbersIntro
+        - numbersStats
+        - successStoriesHeading
+        - successStoriesIntro
+        - successStories
+        - successQuote
+        - teamHeading
+        - teamIntro
+        - teamAreas
+        - teamClosing
+
+    AdminCompanyFormationContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/CompanyFormationContent"
+        ar:
+          $ref: "#/components/schemas/CompanyFormationContent"
+      required: [en, ar]
+
+    BusinessIncubatorsContent:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        introParagraph:
+          type: string
+        whyUsHeading:
+          type: string
+        whyUsItems:
+          type: array
+          items:
+            type: string
+        programsHeading:
+          type: string
+        programs:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              includes:
+                type: string
+              bestFor:
+                type: string
+            required: [name, description, includes, bestFor]
+        howItWorksHeading:
+          type: string
+        howItWorksSteps:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+            required: [title, description]
+        partnersHeading:
+          type: string
+        partners:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              description:
+                type: string
+            required: [label, description]
+        ctaHeading:
+          type: string
+        ctaParagraph:
+          type: string
+        ctaButton:
+          type: string
+      required:
+        - title
+        - subtitle
+        - introParagraph
+        - whyUsHeading
+        - whyUsItems
+        - programsHeading
+        - programs
+        - howItWorksHeading
+        - howItWorksSteps
+        - partnersHeading
+        - partners
+        - ctaHeading
+        - ctaParagraph
+        - ctaButton
+
+    AdminBusinessIncubatorsContent:
+      type: object
+      properties:
+        en:
+          $ref: "#/components/schemas/BusinessIncubatorsContent"
+        ar:
+          $ref: "#/components/schemas/BusinessIncubatorsContent"
       required: [en, ar]
 
     ContactContent:

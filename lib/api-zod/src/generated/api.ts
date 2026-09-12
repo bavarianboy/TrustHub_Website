@@ -397,6 +397,118 @@ export const GetWorkspaceContentResponse = zod.object({
 
 
 /**
+ * @summary Get a Programs page in one locale
+ */
+export const GetProgramPageContentParams = zod.object({
+  "page": zod.enum(['programs', 'incubator-program', 'accelerator-program'])
+})
+
+export const GetProgramPageContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetProgramPageContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+})
+
+
+/**
+ * @summary Get Company Formation page content
+ */
+export const GetCompanyFormationContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetCompanyFormationContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+})
+
+
+/**
+ * @summary Get Business Incubators & Accelerators page content
+ */
+export const GetBusinessIncubatorsContentQueryParams = zod.object({
+  "locale": zod.enum(['en', 'ar'])
+})
+
+export const GetBusinessIncubatorsContentResponse = zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+
+
+/**
  * @summary Get Contact page content
  */
 export const GetContactContentQueryParams = zod.object({
@@ -1283,6 +1395,551 @@ export const AdminUpdateWorkspaceContentResponse = zod.object({
   "faqs": zod.array(zod.object({
   "q": zod.string(),
   "a": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Get a Programs page in both locales
+ */
+export const AdminGetProgramPageContentParams = zod.object({
+  "page": zod.enum(['programs', 'incubator-program', 'accelerator-program'])
+})
+
+export const AdminGetProgramPageContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+})
+})
+
+
+/**
+ * @summary Update a Programs page in both locales
+ */
+export const AdminUpdateProgramPageContentParams = zod.object({
+  "page": zod.enum(['programs', 'incubator-program', 'accelerator-program'])
+})
+
+export const AdminUpdateProgramPageContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+})
+})
+
+export const AdminUpdateProgramPageContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "intro": zod.string(),
+  "sections": zod.array(zod.object({
+  "heading": zod.string(),
+  "description": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "cards": zod.array(zod.object({
+  "slug": zod.enum(['programs', 'incubator-program', 'accelerator-program']),
+  "title": zod.string(),
+  "description": zod.string(),
+  "focusAreas": zod.array(zod.string())
+}))
+})
+})
+
+
+/**
+ * @summary Get Company Formation content in both locales (requires admin session)
+ */
+export const AdminGetCompanyFormationContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+})
+})
+
+
+/**
+ * @summary Update Company Formation content in both locales (requires admin session)
+ */
+export const AdminUpdateCompanyFormationContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+})
+})
+
+export const AdminUpdateCompanyFormationContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "formationServicesHeading": zod.string(),
+  "formationServicesItems": zod.array(zod.string()),
+  "postFormationServicesHeading": zod.string(),
+  "postFormationServicesItems": zod.array(zod.string()),
+  "additionalServicesHeading": zod.string(),
+  "additionalServicesGroups": zod.array(zod.object({
+  "heading": zod.string(),
+  "items": zod.array(zod.string())
+})),
+  "journeyHeading": zod.string(),
+  "journeyIntro": zod.string(),
+  "journeySteps": zod.array(zod.object({
+  "day": zod.string(),
+  "step": zod.string()
+})),
+  "journeyClosing": zod.string(),
+  "numbersHeading": zod.string(),
+  "numbersIntro": zod.string(),
+  "numbersStats": zod.array(zod.string()),
+  "successStoriesHeading": zod.string(),
+  "successStoriesIntro": zod.string(),
+  "successStories": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "result": zod.string()
+})),
+  "successQuote": zod.string(),
+  "teamHeading": zod.string(),
+  "teamIntro": zod.string(),
+  "teamAreas": zod.array(zod.string()),
+  "teamClosing": zod.string()
+})
+})
+
+
+/**
+ * @summary Get Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+export const AdminGetBusinessIncubatorsContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+
+/**
+ * @summary Update Business Incubators & Accelerators content in both locales (requires admin session)
+ */
+export const AdminUpdateBusinessIncubatorsContentBody = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+})
+})
+
+export const AdminUpdateBusinessIncubatorsContentResponse = zod.object({
+  "en": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
+})),
+  "ctaHeading": zod.string(),
+  "ctaParagraph": zod.string(),
+  "ctaButton": zod.string()
+}),
+  "ar": zod.object({
+  "title": zod.string(),
+  "subtitle": zod.string(),
+  "introParagraph": zod.string(),
+  "whyUsHeading": zod.string(),
+  "whyUsItems": zod.array(zod.string()),
+  "programsHeading": zod.string(),
+  "programs": zod.array(zod.object({
+  "name": zod.string(),
+  "description": zod.string(),
+  "includes": zod.string(),
+  "bestFor": zod.string()
+})),
+  "howItWorksHeading": zod.string(),
+  "howItWorksSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})),
+  "partnersHeading": zod.string(),
+  "partners": zod.array(zod.object({
+  "label": zod.string(),
+  "description": zod.string()
 })),
   "ctaHeading": zod.string(),
   "ctaParagraph": zod.string(),

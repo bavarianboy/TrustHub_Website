@@ -3,11 +3,22 @@
     "home": "Home",
     "about": "About",
     "services": "Services",
+    "programs": "Programs",
+    "incubator": "Incubator Program",
+    "accelerator": "Accelerator Program",
     "news": "News",
     "workspace": "Workspace",
     "contact": "Contact",
     "getStarted": "Get Started",
     "tagline": "Business Solutions"
+  },
+  "programs": {
+    "readMore": "Read More",
+    "apply": "Apply Now",
+    "consult": "Book a Free Consultation",
+    "ready": "Ready for your next step?",
+    "readyDesc": "Talk with Trust Hub Business Solutions about the right program for your business.",
+    "loadError": "Couldn't load this page right now. Please try again shortly."
   },
   "footer": {
     "tagline": "Upscale, trusted business solutions provider in Saudi Arabia. We deliver professional confidence for your most important business decisions.",

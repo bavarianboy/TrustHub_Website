@@ -246,6 +246,130 @@ export interface AdminWorkspaceContent {
   ar: WorkspaceContent;
 }
 
+export type ProgramPage = typeof ProgramPage[keyof typeof ProgramPage];
+
+
+export const ProgramPage = {
+  programs: 'programs',
+  'incubator-program': 'incubator-program',
+  'accelerator-program': 'accelerator-program',
+} as const;
+
+export type ProgramPageContentSectionsItem = {
+  heading: string;
+  description: string;
+  items: string[];
+};
+
+export type ProgramPageContentCardsItem = {
+  slug: ProgramPage;
+  title: string;
+  description: string;
+  focusAreas: string[];
+};
+
+export interface ProgramPageContent {
+  title: string;
+  subtitle: string;
+  intro: string;
+  sections: ProgramPageContentSectionsItem[];
+  cards: ProgramPageContentCardsItem[];
+}
+
+export interface AdminProgramPageContent {
+  en: ProgramPageContent;
+  ar: ProgramPageContent;
+}
+
+export type CompanyFormationContentAdditionalServicesGroupsItem = {
+  heading: string;
+  items: string[];
+};
+
+export type CompanyFormationContentJourneyStepsItem = {
+  day: string;
+  step: string;
+};
+
+export type CompanyFormationContentSuccessStoriesItem = {
+  name: string;
+  description: string;
+  result: string;
+};
+
+export interface CompanyFormationContent {
+  title: string;
+  subtitle: string;
+  introParagraph: string;
+  whyUsHeading: string;
+  whyUsItems: string[];
+  formationServicesHeading: string;
+  formationServicesItems: string[];
+  postFormationServicesHeading: string;
+  postFormationServicesItems: string[];
+  additionalServicesHeading: string;
+  additionalServicesGroups: CompanyFormationContentAdditionalServicesGroupsItem[];
+  journeyHeading: string;
+  journeyIntro: string;
+  journeySteps: CompanyFormationContentJourneyStepsItem[];
+  journeyClosing: string;
+  numbersHeading: string;
+  numbersIntro: string;
+  numbersStats: string[];
+  successStoriesHeading: string;
+  successStoriesIntro: string;
+  successStories: CompanyFormationContentSuccessStoriesItem[];
+  successQuote: string;
+  teamHeading: string;
+  teamIntro: string;
+  teamAreas: string[];
+  teamClosing: string;
+}
+
+export interface AdminCompanyFormationContent {
+  en: CompanyFormationContent;
+  ar: CompanyFormationContent;
+}
+
+export type BusinessIncubatorsContentProgramsItem = {
+  name: string;
+  description: string;
+  includes: string;
+  bestFor: string;
+};
+
+export type BusinessIncubatorsContentHowItWorksStepsItem = {
+  title: string;
+  description: string;
+};
+
+export type BusinessIncubatorsContentPartnersItem = {
+  label: string;
+  description: string;
+};
+
+export interface BusinessIncubatorsContent {
+  title: string;
+  subtitle: string;
+  introParagraph: string;
+  whyUsHeading: string;
+  whyUsItems: string[];
+  programsHeading: string;
+  programs: BusinessIncubatorsContentProgramsItem[];
+  howItWorksHeading: string;
+  howItWorksSteps: BusinessIncubatorsContentHowItWorksStepsItem[];
+  partnersHeading: string;
+  partners: BusinessIncubatorsContentPartnersItem[];
+  ctaHeading: string;
+  ctaParagraph: string;
+  ctaButton: string;
+}
+
+export interface AdminBusinessIncubatorsContent {
+  en: BusinessIncubatorsContent;
+  ar: BusinessIncubatorsContent;
+}
+
 export type ContactContentFields = {
   name: string;
   namePlaceholder: string;
@@ -348,6 +472,18 @@ locale: Locale;
 };
 
 export type GetWorkspaceContentParams = {
+locale: Locale;
+};
+
+export type GetProgramPageContentParams = {
+locale: Locale;
+};
+
+export type GetCompanyFormationContentParams = {
+locale: Locale;
+};
+
+export type GetBusinessIncubatorsContentParams = {
 locale: Locale;
 };
 

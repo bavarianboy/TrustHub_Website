@@ -9,6 +9,8 @@
     "seed-page-content": "tsx --env-file-if-exists=../.env ./src/seed-page-content.ts",
     "seed-legal-content": "tsx --env-file-if-exists=../.env ./src/seed-legal-content.ts",
     "seed-contact-content": "tsx --env-file-if-exists=../.env ./src/seed-contact-content.ts",
+    "seed-programs-content": "tsx --env-file-if-exists=../.env ./src/seed-programs-content.ts",
+    "add-programs-to-services": "tsx --env-file-if-exists=../.env ./src/add-programs-to-services.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

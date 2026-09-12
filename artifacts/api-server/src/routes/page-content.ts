@@ -12,13 +12,16 @@ import {
   GetContactContentResponse,
   GetLegalContentQueryParams,
   GetLegalContentResponse,
+  GetProgramPageContentParams,
+  GetProgramPageContentQueryParams,
+  GetProgramPageContentResponse,
 } from "@workspace/api-zod";
 import { HttpError } from "../middlewares/error-handler";
 import { requireParam } from "../lib/params";
 
 const router: IRouter = Router();
 
-type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact";
+type Page = "about" | "services" | "workspace" | "privacy" | "terms" | "contact" | "programs" | "incubator-program" | "accelerator-program";
 type Locale = "en" | "ar";
 
 async function loadContent(page: Page, locale: Locale): Promise<unknown> {
@@ -39,6 +42,13 @@ router.get("/page-content/about", async (req, res) => {
   const parsed = GetAboutContentQueryParams.safeParse(req.query);
   if (!parsed.success) throw new HttpError(400, "locale query parameter must be 'en' or 'ar'");
   res.json(GetAboutContentResponse.parse(await loadContent("about", parsed.data.locale)));
+});
+
+router.get("/page-content/programs/:page", async (req, res) => {
+  const parsed = GetProgramPageContentParams.safeParse({ page: requireParam(req, "page") });
+  const query = GetProgramPageContentQueryParams.safeParse(req.query);
+  if (!parsed.success || !query.success) throw new HttpError(400, "Invalid program page or locale");
+  res.json(GetProgramPageContentResponse.parse(await loadContent(parsed.data.page, query.data.locale)));
 });
 
 router.get("/page-content/services", async (req, res) => {

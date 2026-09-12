@@ -13,6 +13,11 @@ export const pageContentPageEnum = pgEnum("page_content_page", [
   "privacy",
   "terms",
   "contact",
+  "company-formation",
+  "business-incubators-accelerators",
+  "programs",
+  "incubator-program",
+  "accelerator-program",
 ]);
 
 export const pageContentTable = pgTable(
